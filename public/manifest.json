@@ -1,0 +1,75 @@
+{
+  "name": "FreeTools101",
+  "short_name": "FreeTools",
+  "description": "Explore free online calculators, finance tools, developer utilities, text tools, and converters. Fast, accurate, and available without registration.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#121212",
+  "theme_color": "#121212",
+  "lang": "en",
+  "categories": [
+    "online calculators",
+    "free online calculators",
+    "finance calculator",
+    "mortgage calculator",
+    "loan calculator",
+    "investment calculator",
+    "compound interest calculator",
+    "EMI calculator",
+    "salary calculator",
+    "tax calculator",
+    "developer tools",
+    "JSON formatter",
+    "JSON validator",
+    "Base64 encoder",
+    "Base64 decoder",
+    "URL encoder",
+    "URL decoder",
+    "hash generator",
+    "UUID generator",
+    "text tools",
+    "word counter",
+    "character counter",
+    "case converter",
+    "regex tester",
+    "unit converter",
+    "currency converter",
+    "time converter",
+    "percentage calculator",
+    "scientific calculator",
+    "online utilities",
+    "free web tools",
+    "browser tools",
+    "productivity tools"
+  ],
+  "icons":[
+    {
+      "src":"https://freetools101.onrender.com/icons/android-chrome-192x192.png",
+      "sizes":"192x192",
+      "type":"image/png"
+    },
+    {
+      "src":"https://freetools101.onrender.com/icons/android-chrome-512x512.png",
+      "sizes":"512x512",
+      "type":"image/png"
+    },
+    {
+      "src":"https://freetools101.onrender.com/icons/apple-touch-icon.png",
+      "sizes":"512x512",
+      "type":"image/png"
+    },
+    {
+      "src":"https://freetools101.onrender.com/icons/favicon-16x16.png",
+      "sizes":"512x512",
+      "type":"image/png"
+    },
+    {
+      "src":"https://freetools101.onrender.com/icons/favicon-32x32.png",
+      "sizes":"512x512",
+      "type":"image/png"
+    }
+  ]
+}
