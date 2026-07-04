@@ -39,7 +39,7 @@ export default function CTextField (props) {
       variantStyle = {
         ...variantStyle,
         bgcolor: 'transparent',
-        border: '1px solid var(--p-bg-color)',
+        border: '1px solid var(--p-b-color)',
         ':focus-within': {
           border: '1px solid var(--t-b-color)',
           bgcolor: 'var(--s-bg-color) !important'
@@ -50,7 +50,7 @@ export default function CTextField (props) {
       variantStyle = {
         ...variantStyle,
         bgcolor: 'transparent',
-        border: '1px solid var(--p-bg-color)',
+        border: '1px solid var(--p-b-color)',
         ':focus-within': {
           border: '1px solid var(--t-b-color)',
           bgcolor: 'var(--s-bg-color) !important'

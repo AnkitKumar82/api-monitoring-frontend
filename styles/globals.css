@@ -1,10 +1,10 @@
 body {
   /* Backgrounds */
-  --p-bg-color: #eef4ff;
+  --p-bg-color: #ffffff;
   --p-bg-st-color: #ffffff33;
 
   --s-bg-color: #ffffff;      /* Glass card */
-  --t-bg-color: #f4f7fc;      /* Secondary glass */
+  --t-bg-color: #f4f4f4;      /* Secondary glass */
 
   /* Foreground */
   --p-fg-color: #162033;
@@ -13,7 +13,7 @@ body {
   --t-fg-color: #7b8495;
 
   /* Borders */
-  --p-b-color: #ffffff;
+  --p-b-color: #eef4ff;
   --s-b-color: #d9e3f0;
   --t-b-color: #c7d2df;
 
@@ -35,12 +35,16 @@ body {
 
   /* Additional accent colors */
   --success-color: #22c55e;
-  --success-sst-color: #22c55ebb;
+  --success-sst-color: #22c55e66;
   --success-st-color: #22c55e22;
 
   --warning-color: #f59e0b;
-  --warning-sst-color: #f59e0bbb;
+  --warning-sst-color: #f59e0b66;
   --warning-st-color: #f59e0b22;
+
+  --error-color: #c5484d;
+  --error-sst-color: #c5484d66;
+  --error-st-color: #c5484d22;
 
   /* Enhanced glass effects */
   --glass-border: rgba(255, 255, 255, 0.18);

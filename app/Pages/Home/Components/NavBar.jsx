@@ -16,6 +16,7 @@ import CIconButton from '../../../Components/CIconButton'
 import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded'
 import CToggle from '../../../Components/CToggle'
 import CSwitch from '../../../Components/CSwitch'
+import CTypography from '../../../Components/CTypography'
 
 export default function NavBar() {
   const { navbarRef } = useApp()
@@ -49,29 +50,21 @@ export default function NavBar() {
           {/* Logo */}
 
           <Stack
-            direction="row"
-            alignItems="center"
-            spacing={1}
-          >
-            <AppIcon />
-
-            <Link
-              href="/"
-              style={{
-                textDecoration: 'none',
-              }}
+              direction='row'
+              alignItems='center'
+              spacing={1}
             >
-              <Typography
-                variant="body1"
+              <AppIcon />
+              <CTypography
+                cvariant='c'
                 sx={{
                   fontWeight: 700,
                   color: 'var(--p-fg-color)',
                 }}
               >
                 API Sentinel
-              </Typography>
-            </Link>
-          </Stack>
+              </CTypography>
+            </Stack>
 
           {/* Navigation */}
 

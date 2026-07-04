@@ -31,7 +31,7 @@ export default function CSelect (props) {
         <Typography
           sx={{
             mb: '4px',
-            color: 'var(--s-fg-color)',
+            color: 'var(--p-fg-color)',
             fontSize: '0.8rem',
             fontStyle: 'normal',
             fontWeight: '500',
@@ -74,8 +74,8 @@ export default function CSelect (props) {
             '& .MuiMenu-paper': {
               borderRadius: '8px',
               border: '1px solid var(--p-b-color)',
-              bgcolor: 'var(--p-bg-color) !important',
-              boxShadow: '0px 0px 4px var(--p-fg-st-color)',
+              bgcolor: 'var(--s-bg-color) !important',
+              boxShadow: 'var(--glass-shadow)',
               color: 'var(--p-fg-color)',
               maxHeight: '320px',
               width: '320px',

@@ -1,62 +1,196 @@
 import React, { useState } from 'react'
-import Link from 'next/link'
-
 import {
+  Avatar,
   Box,
-  Card,
   Container,
-  Grid,
+  Divider,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
   Stack,
   Typography,
-  Divider
+  useMediaQuery,
+  useTheme
 } from '@mui/material'
-
-import EmailRoundedIcon from '@mui/icons-material/EmailRounded'
-import LockRoundedIcon from '@mui/icons-material/LockRounded'
-import PersonRoundedIcon from '@mui/icons-material/PersonRounded'
-import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded'
-import VisibilityOffRoundedIcon from '@mui/icons-material/VisibilityOffRounded'
-import PersonAddRoundedIcon from '@mui/icons-material/PersonAddRounded'
-import GoogleIcon from '@mui/icons-material/Google'
-
+import {
+  CloudDoneRounded,
+  CreditCardRounded,
+  DashboardRounded,
+  GroupRounded,
+  InsightsRounded,
+  MenuRounded,
+  NotificationsRounded,
+  PublicRounded,
+  SettingsRounded,
+  SpeedRounded,
+  WarningRounded
+} from '@mui/icons-material'
 import CTypography from '../../Components/CTypography'
-import CTextField from '../../Components/CTextField'
-import CButton from '../../Components/CButton'
-import CChip from '../../Components/CChip'
+import DashboardOverview from './Components/DashboardOverview'
+import EndpointsPage from './Components/EndpointsPage'
+import IncidentsPage from './Components/IncidentsPage'
+import NotificationsPage from './Components/NotificationsPage'
+import TeamPage from './Components/TeamPage'
+import SettingsPage from './Components/SettingsPage'
+import StatusPagesPage from './Components/StatusPagesPage'
+import BillingPage from './Components/BillingPage'
+import AnalyticsPage from './Components/AnalyticsPage'
+import AppIcon from '../../Commons/AppIcon'
+import Link from 'next/link'
 
-const GlassCard = ({ style = {}, children }) => (
-  <Card
-    sx={{
-      height: '100%',
-      background: 'var(--s-bg-color)',
-      backdropFilter: 'blur(20px)',
-      border: '1px solid var(--p-b-color)',
-      borderRadius: '20px',
-      boxShadow:
-        '0 8px 32px rgba(15,23,42,.12), inset 0 1px 0 rgba(255,255,255,.35)',
-      ...style
-    }}
-  >
-    {children}
-  </Card>
-)
+const sidebarItems = [
+  { label: 'Dashboard', icon: DashboardRounded },
+  { label: 'Endpoints', icon: CloudDoneRounded },
+  { label: 'Incidents', icon: WarningRounded },
+  { label: 'Notifications', icon: NotificationsRounded },
+  { label: 'Team', icon: GroupRounded },
+  { label: 'Settings', icon: SettingsRounded },
+  { label: 'Status Pages', icon: PublicRounded },
+  { label: 'Billing', icon: CreditCardRounded },
+  { label: 'Analytics', icon: InsightsRounded }
+]
+
+const Sidebar = ({ open, onClose, activeSection, onSelect }) => {
+  const content = (
+    <Box sx={{ width: 280, height: '100%', p: 2.5, background: 'var(--s-bg-color)', borderRight: '1px solid var(--s-b-color)' }}>
+      <Stack spacing={2.5} sx={{ height: '100%' }}>
+        <Stack
+          direction='column'
+          alignItems='center'
+        >
+          <Stack
+            direction='row'
+            alignItems='center'
+            spacing={1}
+          >
+            <AppIcon />
+            <CTypography
+              cvariant='c'
+              sx={{
+                fontWeight: 700,
+                color: 'var(--p-fg-color)',
+              }}
+            >
+              API Sentinel
+            </CTypography>
+          </Stack>
+        </Stack>
+
+        <List disablePadding>
+          {sidebarItems.map((item) => {
+            const Icon = item.icon
+            return (
+              <ListItem key={item.label} disablePadding sx={{ mb: 0.5 }}>
+                <ListItemButton
+                  selected={activeSection === item.label}
+                  onClick={() => { onSelect(item.label); onClose() }}
+                  disableRipple
+                  sx={{
+                    borderRadius: '8px',
+                    ':hover': { backgroundColor: 'var(--t-bg-color)' },
+                    '&.Mui-selected': { backgroundColor: 'var(--t-bg-color)' },
+                    '&.Mui-selected:hover': { backgroundColor: 'var(--t-bg-color)' }
+                  }}
+                >
+                  <ListItemText
+                    primary={item.label}
+                    primaryTypographyProps={{
+                      fontSize: '0.8rem',
+                      fontWeight: activeSection === item.label ? 700 : 500,
+                      color: activeSection === item.label ? 'var(--p-fg-color)' : 'var(--s-fg-color)'
+                    }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            )
+          })}
+        </List>
+
+        <Divider sx={{ borderColor: 'var(--s-b-color)' }} />
+
+        <Box sx={{ borderRadius: '8px', p: 2, background: 'var(--t-bg-color)' }}>
+          <CTypography cvariant='c' sx={{ fontWeight: 700, color: 'var(--p-fg-color)' }}>Health score</CTypography>
+          <Typography variant='h5' sx={{ fontWeight: 800, color: 'var(--success-color)' }}>97.8</Typography>
+          <CTypography cvariant='caption' sx={{ mt: 0.5 }}>All systems operating normally with 2 watchlist services.</CTypography>
+        </Box>
+      </Stack>
+    </Box>
+  )
+
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
+
+  if (isMobile) {
+    return (
+      <Drawer
+        anchor='left'
+        open={open}
+        onClose={onClose}
+        ModalProps={{ keepMounted: true }}
+        sx={{ '& .MuiDrawer-paper': { boxSizing: 'border-box', borderRight: 'none', background: 'transparent' } }}
+      >
+        {content}
+      </Drawer>
+    )
+  }
+
+  return <Box sx={{ width: 280, flexShrink: 0, display: { xs: 'none', lg: 'block' } }}>{content}</Box>
+}
 
 export default function Main() {
-  
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState('Endpoints')
+
+  const renderSection = () => {
+    switch (activeSection) {
+      case 'Endpoints':
+        return <EndpointsPage />
+      case 'Incidents':
+        return <IncidentsPage />
+      case 'Notifications':
+        return <NotificationsPage />
+      case 'Team':
+        return <TeamPage />
+      case 'Settings':
+        return <SettingsPage />
+      case 'Status Pages':
+        return <StatusPagesPage />
+      case 'Billing':
+        return <BillingPage />
+      case 'Analytics':
+        return <AnalyticsPage />
+      default:
+        return <DashboardOverview />
+    }
+  }
+
   return (
-    <Box 
-      display='flex' 
-      flexDirection='column'
-      minHeight='100vh'
-      sx={{
-        background: 'var(--bg-gradient)',
-        backgroundSize: '400% 400%',
-        animation: 'gradientBG 15s ease infinite',
-        '& .MuiBox-root': {
-          py: { xs: 2, sm: 4, md: 6 }
-        }
-      }}
-    >
+    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+      <Sidebar open={mobileOpen} onClose={() => setMobileOpen(false)} activeSection={activeSection} onSelect={setActiveSection} />
+
+      <Box component='main' sx={{ flexGrow: 1, minWidth: 0 }}>
+        <Container maxWidth='xl' sx={{ py: { xs: 3, md: 4 } }}>
+          <Stack direction='row' spacing={1.5} alignItems='center' sx={{ mb: 3, display: { lg: 'none' } }}>
+            <IconButton
+              disableRipple 
+              sx={{
+                width: '20px',
+                height: '20px',
+                color: 'var(--p-fg-color)'
+              }}
+              onClick={() => setMobileOpen(true)}
+            >
+              <MenuRounded />
+            </IconButton>
+            <CTypography cvariant='c' sx={{ fontWeight: 700, color: 'var(--p-fg-color)' }}>{activeSection}</CTypography>
+          </Stack>
+          {renderSection()}
+        </Container>
+      </Box>
     </Box>
   )
 }

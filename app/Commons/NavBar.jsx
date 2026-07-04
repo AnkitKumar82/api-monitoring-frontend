@@ -11,6 +11,7 @@ import Link from 'next/link'
 
 import AppIcon from './AppIcon'
 import { useApp } from '../DataStores/AppContext'
+import CTypography from '../Components/CTypography'
 import CButton from '../Components/CButton'
 import CIconButton from '../Components/CIconButton'
 import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded'
@@ -61,15 +62,15 @@ export default function NavBar() {
                 textDecoration: 'none',
               }}
             >
-              <Typography
-                variant="body1"
+              <CTypography
+                cvariant="sh"
                 sx={{
                   fontWeight: 700,
                   color: 'var(--p-fg-color)',
                 }}
               >
                 API Sentinel
-              </Typography>
+              </CTypography>
             </Link>
           </Stack>
 

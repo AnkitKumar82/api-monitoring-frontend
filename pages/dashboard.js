@@ -2,7 +2,7 @@ import Head from 'next/head'
 import Home from '../app/Pages/Home'
 import CustomAlert from '../app/Commons/CustomAlert'
 import Script from 'next/script'
-import SignIn from '../app/Pages/SignIn'
+import Dashboard from '../app/Pages/Dashboard'
 
 function renderedPage() {
   return (
@@ -35,7 +35,7 @@ function renderedPage() {
           width: '100vw',
           minHeight: '100vh'
         }}>
-        <SignIn />
+        <Dashboard />
         <CustomAlert />
         <Script
           id="website-schema"
