@@ -7,7 +7,8 @@ import {
   Container,
   Grid,
   Stack,
-  Typography
+  Typography,
+  Divider
 } from '@mui/material'
 
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded'
@@ -16,6 +17,7 @@ import PersonRoundedIcon from '@mui/icons-material/PersonRounded'
 import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded'
 import VisibilityOffRoundedIcon from '@mui/icons-material/VisibilityOffRounded'
 import PersonAddRoundedIcon from '@mui/icons-material/PersonAddRounded'
+import GoogleIcon from '@mui/icons-material/Google'
 
 import CTypography from '../../Components/CTypography'
 import CTextField from '../../Components/CTextField'
@@ -194,6 +196,15 @@ export default function Main() {
                       disabled={isSubmitting}
                     />
 
+                    {/* Divider with "Or Continue With" text */}
+                    <Stack direction='row' alignItems='center' spacing={2} sx={{ my: 2 }}>
+                      <Divider sx={{ flex: 1 }} />
+                      <Typography variant='body2' sx={{ color: 'var(--s-fg-color)' }}>
+                        Or Continue With
+                      </Typography>
+                      <Divider sx={{ flex: 1 }} />
+                    </Stack>
+
                     {/* Sign Up With Google Button */}
                     <CButton
                       label={isSubmitting ? 'Creating Account...' : 'Sign Up with Google'}
@@ -204,6 +215,7 @@ export default function Main() {
                       fullWidth
                       sx={{ py: 1.5 }}
                       disabled={isSubmitting}
+                      startIcon={GoogleIcon}
                     />
                   </Stack>
                 </Box>
