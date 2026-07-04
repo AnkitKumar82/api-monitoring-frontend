@@ -2,56 +2,27 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Box,
   Card,
-  CardContent,
-  Chip,
   Container,
-  Divider,
   Grid,
-  Paper,
   Stack,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  TextField,
-  LinearProgress
+  Typography,
+  Divider
 } from '@mui/material'
 
-import KeyboardArrowRightRoundedIcon from '@mui/icons-material/KeyboardArrowRightRounded'
-import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded'
-
-import PublicRoundedIcon from '@mui/icons-material/PublicRounded'
-import SpeedRoundedIcon from '@mui/icons-material/SpeedRounded'
-import SupportAgentRoundedIcon from '@mui/icons-material/SupportAgentRounded'
-import NotificationsActiveRoundedIcon from '@mui/icons-material/NotificationsActiveRounded'
-import TimelineRoundedIcon from '@mui/icons-material/TimelineRounded'
-import SecurityRoundedIcon from '@mui/icons-material/SecurityRounded'
-import VerifiedRoundedIcon from '@mui/icons-material/VerifiedRounded'
-import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded'
-import RocketLaunchRoundedIcon from '@mui/icons-material/RocketLaunchRounded'
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded'
-import BoltRoundedIcon from '@mui/icons-material/BoltRounded'
+import LockRoundedIcon from '@mui/icons-material/LockRounded'
+import PersonRoundedIcon from '@mui/icons-material/PersonRounded'
+import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded'
+import VisibilityOffRoundedIcon from '@mui/icons-material/VisibilityOffRounded'
+import PersonAddRoundedIcon from '@mui/icons-material/PersonAddRounded'
+import GoogleIcon from '@mui/icons-material/Google'
 
 import CTypography from '../../Components/CTypography'
 import CTextField from '../../Components/CTextField'
-import Hero from './Components/Hero'
-import Features from './Components/Features'
-import Pricing from './Components/Pricing'
-import HowItWorks from './Components/HowItWorks'
-import FAQ from './Components/FAQ'
-import Footer from './Components/Footer'
-import CChip from '../../Components/CChip'
 import CButton from '../../Components/CButton'
-import CExpansionPanel from '../../Components/CExpansionPanel'
-import CDialog from '../../Components/CDialog'
-import CAlert from '../../Components/CAlert'
-import NavBar from './Components/NavBar'
+import CChip from '../../Components/CChip'
 
 const GlassCard = ({ style = {}, children }) => (
   <Card
@@ -71,27 +42,21 @@ const GlassCard = ({ style = {}, children }) => (
 )
 
 export default function Main() {
-  const [expandedFAQ, setExpandedFAQ] = useState(null)
-
+  
   return (
     <Box 
-      display="flex" 
-      flexDirection="column"
+      display='flex' 
+      flexDirection='column'
+      minHeight='100vh'
+      sx={{
+        background: 'var(--bg-gradient)',
+        backgroundSize: '400% 400%',
+        animation: 'gradientBG 15s ease infinite',
+        '& .MuiBox-root': {
+          py: { xs: 2, sm: 4, md: 6 }
+        }
+      }}
     >
-      {/* ===================== NavBar ===================== */}
-      <NavBar />
-      {/* ===================== HERO ===================== */}
-      <Hero />
-      {/* ===================== FEATURES ===================== */}
-      <Features />
-      {/* ===================== HOW IT WORKS ===================== */}
-      <HowItWorks />
-      {/* ===================== PRICING ===================== */}
-      <Pricing />
-      {/* ===================== FAQ ===================== */}
-      <FAQ />
-      {/* ===================== Footer ===================== */}
-      <Footer />
     </Box>
   )
 }

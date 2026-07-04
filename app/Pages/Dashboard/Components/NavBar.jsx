@@ -86,85 +86,6 @@ export default function NavBar() {
               },
             }}
           >
-            <Link
-              href="#features"
-              style={{
-                textDecoration: 'none',
-                color: 'inherit',
-              }}
-            >
-              <Typography
-                variant="body2"
-                sx={{
-                  color: 'var(--s-fg-color)',
-                  '&:hover': {
-                    color: 'var(--p-fg-color)',
-                  },
-                }}
-              >
-                Features
-              </Typography>
-            </Link>
-
-            <Link
-              href="#pricing"
-              style={{
-                textDecoration: 'none',
-                color: 'inherit',
-              }}
-            >
-              <Typography
-                variant="body2"
-                sx={{
-                  color: 'var(--s-fg-color)',
-                  '&:hover': {
-                    color: 'var(--p-fg-color)',
-                  },
-                }}
-              >
-                Pricing
-              </Typography>
-            </Link>
-
-            <Link
-              href="#faq"
-              style={{
-                textDecoration: 'none',
-                color: 'inherit',
-              }}
-            >
-              <Typography
-                variant="body2"
-                sx={{
-                  color: 'var(--s-fg-color)',
-                  '&:hover': {
-                    color: 'var(--p-fg-color)',
-                  },
-                }}
-              >
-                FAQ
-              </Typography>
-            </Link>
-
-            {/* <Link
-              href="/roadmap"
-              style={{
-                textDecoration: 'none',
-                color: 'inherit',
-              }}
-            >
-              <Typography
-                variant="body2"
-                sx={{
-                  color: 'var(--s-fg-color)',
-                  '&:hover': {
-                    color: 'var(--p-fg-color)',
-                  },
-                }}
-              >
-                Roadmap
-              </Typography>
-            </Link> */}
           </Stack>
 
           {/* Right Side */}
@@ -174,24 +95,6 @@ export default function NavBar() {
             spacing={2}
             alignItems="center"
           >
-            <Link
-              href="/sign-in"
-              style={{
-                textDecoration: 'none',
-                color: 'inherit',
-              }}
-            >
-              <CButton size="large" cvariant='l' label="Log In"/>  
-            </Link>
-            <Link
-              href="/sign-up"
-              style={{
-                textDecoration: 'none',
-                color: 'inherit',
-              }}
-            >
-              <CButton size="large" cvariant='s' active label="Sign Up"/>  
-            </Link>
           </Stack>
         </Stack>
       </Toolbar>
