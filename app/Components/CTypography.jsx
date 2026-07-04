@@ -54,6 +54,14 @@ export default function CTypography (props) {
         color: 'var(--t-fg-color)'
       }
       break
+    case 'paragraph':
+    case 'p':
+      variantStyle = {
+        fontSize: '1rem',
+        fontWeight: '400',
+        color: 'var(--t-fg-color)'
+      }
+      break
     default:
       variantStyle = {
         fontSize: '0.9rem',

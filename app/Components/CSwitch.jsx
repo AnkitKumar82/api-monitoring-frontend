@@ -4,22 +4,31 @@ import Switch from '@mui/material/Switch'
 export default function CSwitch(props) {
   const {
     showFocusHighlight = false,
+    scale = 1,
     ...baseProps
   } = props
+
+  const width = `${30*scale}px`
+  const height = `${18*scale}px`
+  const margin = `${2*scale}px`
+  const transform = `translateX(${12*scale}px)`
+  const thumbWidth = `${14*scale}px`
+  const thumbHeight = `${14*scale}px`
+  const borderRadius = `${9*scale}px`
 
   return (
     <Switch
       checked={props.checked}
       sx={{
-        width: '30px',
-        height: '18px',
+        width,
+        height,
         padding: 0,
         '& .MuiSwitch-switchBase': {
           padding: 0,
-          margin: '2px',
+          margin,
           transitionDuration: '200ms',
           '&.Mui-checked': {
-            transform: 'translateX(12px)',
+            transform,
             color: 'var(--p-bg-color)',
             '& + .MuiSwitch-track': {
               backgroundColor: 'var(--p-fg-color)',
@@ -37,15 +46,15 @@ export default function CSwitch(props) {
         },
         '& .MuiSwitch-thumb': {
           boxSizing: 'border-box',
-          width: '14px',
-          height: '14px'
+          width: thumbWidth,
+          height: thumbHeight
         },
         '& .MuiSwitch-track': {
-          borderRadius: '9px',
+          borderRadius,
           backgroundColor: 'var(--t-bg-color)',
           opacity: 1
         },
-        borderRadius: '9px'
+        borderRadius
       }}
       {...baseProps}
     />

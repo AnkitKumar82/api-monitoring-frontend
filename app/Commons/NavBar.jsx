@@ -11,6 +11,11 @@ import Link from 'next/link'
 
 import AppIcon from './AppIcon'
 import { useApp } from '../DataStores/AppContext'
+import CButton from '../Components/CButton'
+import CIconButton from '../Components/CIconButton'
+import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded'
+import CToggle from '../Components/CToggle'
+import CSwitch from '../Components/CSwitch'
 
 export default function NavBar() {
   const { navbarRef } = useApp()
@@ -21,7 +26,7 @@ export default function NavBar() {
       ref={navbarRef}
       sx={{
         zIndex: 1000,
-        bgcolor: 'var(--p-bg-st-color) !important',
+        bgcolor: 'transparent !important',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
         boxShadow: 'none',
@@ -141,7 +146,7 @@ export default function NavBar() {
               </Typography>
             </Link>
 
-            <Link
+            {/* <Link
               href="/roadmap"
               style={{
                 textDecoration: 'none',
@@ -159,7 +164,7 @@ export default function NavBar() {
               >
                 Roadmap
               </Typography>
-            </Link>
+            </Link> */}
           </Stack>
 
           {/* Right Side */}
@@ -169,29 +174,11 @@ export default function NavBar() {
             spacing={2}
             alignItems="center"
           >
-            <Button
-              variant="text"
-              disableRipple
-              sx={{
-                display: {
-                  xs: 'none',
-                  md: 'inline-flex',
-                },
-              }}
-            >
-              Sign In
-            </Button>
-
-            <Button
-              variant="contained"
-              disableRipple
-              sx={{
-                borderRadius: '12px',
-                px: 3,
-              }}
-            >
-              Join Waitlist
-            </Button>
+            <CIconButton cvariant='t' icon={LightModeRoundedIcon}/>
+            <CSwitch
+              showFocusHighlight
+              scale={1.5}
+            />
           </Stack>
         </Stack>
       </Toolbar>
