@@ -544,11 +544,11 @@ export default function Features() {
                       height: 140,
                     }}
                   >
-                    {[35,60,48,72,95,80,58,45,66,88,76,52].map((height,index)=>(
+                    {[35,60,48,72,95,80,58,45,66,88,76,52,55,60,28,32,75,50,68,85,36,38,76,32].map((height,index)=>(
                       <Box
                         key={index}
                         sx={{
-                          width: "6%",
+                          width: "3%",
                           height: `${height}%`,
                           borderRadius: "10px 10px 0 0",
                           bgcolor:

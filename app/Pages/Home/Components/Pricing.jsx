@@ -867,6 +867,9 @@ export default function Pricing() {
               placeholder="Enter your work email"
               size="large"
               fullWidth
+              sx={{
+                borderRadius: "12px"
+              }}
             />
             <Button
               variant="contained"

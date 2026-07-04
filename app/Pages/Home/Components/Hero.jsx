@@ -116,13 +116,28 @@ export default function Hero() {
               </CTypography>
 
               <Stack
-                direction={{
-                  xs: 'column',
-                  sm: 'row',
-                }}
+                direction="row"
                 spacing={2}
+                alignItems="center"
               >
-                <CButton size="large" cvariant='s' label="Join Waitlist"/>  
+                <Link
+                  href="/sign-up"
+                  style={{
+                    textDecoration: 'none',
+                    color: 'inherit',
+                  }}
+                >
+                  <CButton size="large" cvariant='t' label="Log In"/>  
+                </Link>
+                <Link
+                  href="/sign-up"
+                  style={{
+                    textDecoration: 'none',
+                    color: 'inherit',
+                  }}
+                >
+                  <CButton size="large" cvariant='s' label="Sign Up"/>  
+                </Link>
               </Stack>
 
               <Stack

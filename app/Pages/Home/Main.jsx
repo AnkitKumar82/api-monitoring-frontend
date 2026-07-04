@@ -51,6 +51,7 @@ import CButton from '../../Components/CButton'
 import CExpansionPanel from '../../Components/CExpansionPanel'
 import CDialog from '../../Components/CDialog'
 import CAlert from '../../Components/CAlert'
+import NavBar from './Components/NavBar'
 
 const GlassCard = ({ style = {}, children }) => (
   <Card
@@ -77,9 +78,10 @@ export default function Main() {
       display="flex" 
       flexDirection="column"
     >
+      {/* ===================== NavBar ===================== */}
+      <NavBar />
       {/* ===================== HERO ===================== */}
       <Hero />
-
       {/* ===================== FEATURES ===================== */}
       <Features />
       {/* ===================== HOW IT WORKS ===================== */}

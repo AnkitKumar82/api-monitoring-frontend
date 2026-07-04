@@ -9,13 +9,13 @@ import {
 } from '@mui/material'
 import Link from 'next/link'
 
-import AppIcon from './AppIcon'
-import { useApp } from '../DataStores/AppContext'
-import CButton from '../Components/CButton'
-import CIconButton from '../Components/CIconButton'
+import AppIcon from '../../../Commons/AppIcon'
+import { useApp } from '../../../DataStores/AppContext'
+import CButton from '../../../Components/CButton'
+import CIconButton from '../../../Components/CIconButton'
 import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded'
-import CToggle from '../Components/CToggle'
-import CSwitch from '../Components/CSwitch'
+import CToggle from '../../../Components/CToggle'
+import CSwitch from '../../../Components/CSwitch'
 
 export default function NavBar() {
   const { navbarRef } = useApp()
@@ -145,6 +145,26 @@ export default function NavBar() {
                 FAQ
               </Typography>
             </Link>
+
+            {/* <Link
+              href="/roadmap"
+              style={{
+                textDecoration: 'none',
+                color: 'inherit',
+              }}
+            >
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'var(--s-fg-color)',
+                  '&:hover': {
+                    color: 'var(--p-fg-color)',
+                  },
+                }}
+              >
+                Roadmap
+              </Typography>
+            </Link> */}
           </Stack>
 
           {/* Right Side */}
@@ -170,7 +190,7 @@ export default function NavBar() {
                 color: 'inherit',
               }}
             >
-              <CButton size="large" cvariant='s' label="Sign Up"/>  
+              <CButton size="large" cvariant='s' active label="Sign Up"/>  
             </Link>
           </Stack>
         </Stack>

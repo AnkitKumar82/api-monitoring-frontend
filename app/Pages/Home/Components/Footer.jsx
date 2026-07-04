@@ -295,6 +295,7 @@ export default function Footer() {
                   size="small"
                   placeholder="Email address"
                   fullWidth
+                  cvariant='s'
                 />
 
                 <CButton cvariant='t' label="Join"/>  

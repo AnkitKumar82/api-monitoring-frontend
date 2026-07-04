@@ -1,14 +1,15 @@
 import * as React from 'react'
 import Main from './Main'
 import NavBar from '../../Commons/NavBar'
+import { Box } from '@mui/material'
 
-function Tools (props) {
+function SignUp () {
   return (
-    <>
+    <Box>
       <NavBar />
-      <Main tool={props.tool} />
-    </>
+      <Main />
+    </Box>
   )
 }
 
-export default Tools
+export default SignUp

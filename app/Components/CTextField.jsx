@@ -6,6 +6,7 @@ import {
   Stack,
 } from '@mui/material'
 
+{/* <CTextField */}
 export default function CTextField (props) {
   const {
     label = '',
@@ -27,13 +28,9 @@ export default function CTextField (props) {
     height: '100%',
     transition: '0.2s',
     cursor: 'pointer',
-    border: '1px solid var(--p-fg-st-color)',
-    background: "var(--s-bg-color) !important",
-    backdropFilter: "blur(18px) saturate(180%)",
-    "-webkit-backdrop-filter": "blur(18px) saturate(180%)",
-    border: "1px solid var(--p-b-color)",
-    borderRadius: "12px",
-    boxShadow:"0 8px 32px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255,255,255,0.12)"    
+    background: 'var(--s-bg-color) !important',
+    backdropFilter: 'blur(18px) saturate(180%)',
+    '-webkit-backdrop-filter': 'blur(18px) saturate(180%)',
   }
 
   switch(cvariant) {
@@ -42,19 +39,21 @@ export default function CTextField (props) {
       variantStyle = {
         ...variantStyle,
         bgcolor: 'transparent',
-        border: '1px solid var(--s-bg-color)',
+        border: '1px solid var(--p-bg-color)',
         ':focus-within': {
-          border: '1px solid var(--p-b-color)'
+          border: '1px solid var(--t-b-color)',
+          bgcolor: 'var(--s-bg-color) !important'
         }
       }
       break
     default:
       variantStyle = {
         ...variantStyle,
-        bgcolor: 'var(--s-bg-color)',
-        border: '1px solid var(--s-bg-color)',
+        bgcolor: 'transparent',
+        border: '1px solid var(--p-bg-color)',
         ':focus-within': {
-          border: '1px solid var(--p-b-color)'
+          border: '1px solid var(--t-b-color)',
+          bgcolor: 'var(--s-bg-color) !important'
         }
       }
   }
@@ -64,7 +63,7 @@ export default function CTextField (props) {
       direction='column'
       justifyContent='flex-start'
       alignItems='flex-start'
-      sx={ fullWidth && { width: "100%" }}
+      sx={ fullWidth && { width: '100%' }}
     >
       {
         label && 
