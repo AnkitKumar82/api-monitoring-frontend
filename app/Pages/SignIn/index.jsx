@@ -3,7 +3,7 @@ import Main from './Main'
 import NavBar from './Components/NavBar'
 import { Box } from '@mui/material'
 
-function SignUp () {
+function SignIn () {
   return (
     <Box>
       <NavBar />
@@ -12,4 +12,4 @@ function SignUp () {
   )
 }
 
-export default SignUp
+export default SignIn

@@ -155,13 +155,13 @@ export default function NavBar() {
             alignItems="center"
           >
             <Link
-              href="/sign-up"
+              href="/sign-in"
               style={{
                 textDecoration: 'none',
                 color: 'inherit',
               }}
             >
-              <CButton size="large" cvariant='l' label="Log In"/>  
+              <CButton size="large" cvariant='l' label="Sign In"/>  
             </Link>
             <Link
               href="/sign-up"

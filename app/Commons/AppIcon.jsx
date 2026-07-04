@@ -1,9 +1,9 @@
 import * as React from 'react'
-import SentimentVerySatisfiedRoundedIcon from '@mui/icons-material/SentimentVerySatisfiedRounded'
+import WebhookRoundedIcon from '@mui/icons-material/WebhookRounded';
 
 function AppIcon() {
   return (
-    <SentimentVerySatisfiedRoundedIcon
+    <WebhookRoundedIcon
       sx={{
         width: '20px',
         height: '20px',

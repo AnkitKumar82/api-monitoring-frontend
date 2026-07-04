@@ -70,7 +70,7 @@ export default function CTextField (props) {
         <Typography
           sx={{
             mb: '4px',
-            color: 'var(--s-fg-color)',
+            color: 'var(--p-fg-color)',
             fontSize: '0.8rem',
             fontStyle: 'normal',
             fontWeight: '500',

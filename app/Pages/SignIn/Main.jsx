@@ -13,16 +13,15 @@ import {
 
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded'
 import LockRoundedIcon from '@mui/icons-material/LockRounded'
-import PersonRoundedIcon from '@mui/icons-material/PersonRounded'
 import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded'
 import VisibilityOffRoundedIcon from '@mui/icons-material/VisibilityOffRounded'
-import PersonAddRoundedIcon from '@mui/icons-material/PersonAddRounded'
 import GoogleIcon from '@mui/icons-material/Google'
 
 import CTypography from '../../Components/CTypography'
 import CTextField from '../../Components/CTextField'
 import CButton from '../../Components/CButton'
-import CChip from '../../Components/CChip'
+import CCheckbox from '../../Components/CCheckbox'
+import CToggle from '../../Components/CToggle'
 
 const GlassCard = ({ style = {}, children }) => (
   <Card
@@ -43,9 +42,9 @@ const GlassCard = ({ style = {}, children }) => (
 
 export default function Main() {
   const [formData, setFormData] = useState({
-    name: '',
     email: '',
-    password: ''
+    password: '',
+    rememberMe: false
   })
   
   const [showPassword, setShowPassword] = useState(false)
@@ -53,10 +52,10 @@ export default function Main() {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value, type, checked } = e.target
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }))
     // Clear error when user starts typing
     if (errors[name]) {
@@ -70,10 +69,6 @@ export default function Main() {
   const validateForm = () => {
     const newErrors = {}
 
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required'
-    }
-
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required'
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
@@ -82,8 +77,8 @@ export default function Main() {
 
     if (!formData.password) {
       newErrors.password = 'Password is required'
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters'
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters'
     }
 
     return newErrors
@@ -102,8 +97,8 @@ export default function Main() {
     // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false)
-      // Here you would typically make an API call to sign up the user
-      console.log('Sign up data:', formData)
+      // Here you would typically make an API call to login the user
+      console.log('Login data:', formData)
       // Redirect or show success message
     }, 1000)
   }
@@ -129,28 +124,15 @@ export default function Main() {
                 {/* Header */}
                 <Stack alignItems='center' spacing={2}>
                   <CTypography cvariant='sh' sx={{ textAlign: 'flex-start' }}>
-                    Create Your Account
+                    Welcome Back
                   </CTypography>
                   <CTypography cvariant='shd' sx={{ textAlign: 'center' }}>
-                    Join our community and start monitoring your APIs today
+                    Sign in to continue to your dashboard
                   </CTypography>
                 </Stack>
-                {/* Sign Up Form */}
+                {/* Login Form */}
                 <Box component='form' onSubmit={handleSubmit} noValidate>
                   <Stack spacing={2.5}>
-                    {/* Name Field */}
-                    <CTextField
-                      label='Full Name'
-                      name='name'
-                      placeholder='John Doe'
-                      value={formData.name}
-                      onChange={handleChange}
-                      error={!!errors.name}
-                      helperText={errors.name}
-                      // startIcon={PersonRoundedIcon}
-                      fullWidth
-                    />
-
                     {/* Email Field */}
                     <CTextField
                       cvariant='s'
@@ -184,9 +166,33 @@ export default function Main() {
                       fullWidth
                     />
 
+                    {/* Remember Me and Forgot Password */}
+                    <Stack direction='row' justifyContent='space-between' alignItems='center'>
+                      <span></span>
+                      <Link
+                        href='/forgot-password'
+                        style={{
+                          textDecoration: 'none',
+                          color: 'inherit',
+                        }}
+                      >
+                        <CTypography
+                          component='span'
+                          sx={{
+                            color: 'var(--p-fg-color)',
+                            '&:hover': {
+                              textDecoration: 'underline'
+                            },
+                          }}
+                        >
+                          Forgot Password?
+                        </CTypography>
+                      </Link>
+                    </Stack>
+
                     {/* Submit Button */}
                     <CButton
-                      label={isSubmitting ? 'Creating Account...' : 'Sign Up'}
+                      label={isSubmitting ? 'Signing In...' : 'Sign In'}
                       cvariant='p'
                       active
                       size='small'
@@ -205,9 +211,9 @@ export default function Main() {
                       <Divider sx={{ flex: 1 }} />
                     </Stack>
 
-                    {/* Sign Up With Google Button */}
+                    {/* Login With Google Button */}
                     <CButton
-                      label={isSubmitting ? 'Creating Account...' : 'Sign Up with Google'}
+                      label={isSubmitting ? 'Signing In...' : 'Sign In with Google'}
                       cvariant='s'
                       active
                       size='small'
@@ -220,7 +226,7 @@ export default function Main() {
                   </Stack>
                 </Box>
 
-                {/* Login Link */}
+                {/* Sign Up Link */}
                 <Stack alignItems='center' spacing={1}>
                   <Typography
                     sx={{
@@ -229,9 +235,9 @@ export default function Main() {
                       color: 'var(--s-fg-color)'
                     }}
                   >
-                    Already have an account?{' '}
+                    Don't have an account?{' '}
                     <Link
-                      href='/sign-in'
+                      href='/sign-up'
                       style={{
                         textDecoration: 'none',
                         color: 'inherit',
@@ -246,7 +252,7 @@ export default function Main() {
                           },
                         }}
                       >
-                        Sign In
+                        Sign Up
                       </CTypography>
                     </Link>
                   </Typography>
