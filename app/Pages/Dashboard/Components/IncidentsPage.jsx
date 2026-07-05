@@ -1,36 +1,174 @@
-import React from 'react'
-import { Box, Grid, Stack } from '@mui/material'
+import React, { useState } from 'react'
+import { Box, Grid, Paper, Stack, MenuItem, TablePagination, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
+import { AddRounded, SearchRounded } from '@mui/icons-material'
+import CButton from '../../../Components/CButton'
+import CChip from '../../../Components/CChip'
 import CTypography from '../../../Components/CTypography'
+import CTextField from '../../../Components/CTextField'
+import CSelect from '../../../Components/CSelect'
 import Panel from './Panel'
+import REGIONS from '../Constants/REGIONS'
+
 
 const incidents = [
-  { title: 'Payments API', severity: 'Critical', started: '12:04 PM', recovered: '12:07 PM', duration: '3m 22s', rootCause: 'Upstream timeout during peak traffic', notification: 'Slack + Email' },
-  { title: 'Inventory API', severity: 'Warning', started: '10:15 AM', recovered: '10:17 AM', duration: '1m 45s', rootCause: 'Transient dependency degradation', notification: 'Email only' }
+  { name: 'Payments API', resolveTime: '5 min ago', startTime: '2 min ago', uptime:'93.132%', reason:'Invalid status code: 404', method: 'GET', url: 'https://api.example.com/payments', interval: '1 min', regions: ["US","EU"], status: 'RESOLVED', latency: '121ms', lastCheck: '2 min ago' },
+  { name: 'Auth Service', resolveTime: '-', startTime: '5 min ago', uptime:'78.112%', reason:'Invalid status code: 410', method: 'POST', url: 'https://api.example.com/auth', interval: '30 sec', regions: ["US","SG"], status: 'ONGOING', latency: '245ms', lastCheck: '5 min ago' },
+  { name: 'Inventory API',resolveTime: '5 min ago', startTime: '10 min ago', uptime:'36.82%', reason:'Invalid status code: 500', method: 'GET', url: 'https://api.example.com/inventory', interval: '5 min', regions: ['SG'], status: 'RESOLVED', latency: '-', lastCheck: '10 min ago' },
+  { name: 'Inventory API',resolveTime: '-', startTime: '10 min ago', uptime:'36.82%', reason:'Invalid response structure: { "message": "Unknown" }', method: 'GET', url: 'https://api.example.com/inventory', interval: '5 min', regions: ["SG"], status: 'ONGOING', latency: '-', lastCheck: '10 min ago' }
 ]
 
+const StatusBadge = ({ status }) => {
+  const map = {
+    RESOLVED: { label: "Resolved", color: "var(--success-color)", background: "rgba(34,197,94,.12)" },
+    ONGOING: { label: "Ongoing", color: "var(--error-color)", background: "rgba(239,68,68,.12)" },
+  }
+
+  const current = map[status] || map.healthy
+  return (
+    <Stack
+      direction="row"
+      spacing={1}
+      alignItems="center"
+      sx={{
+        width:"fit-content",
+        px:1.5,
+        py:.5,
+        borderRadius:999,
+        bgcolor:current.background
+      }}
+      >
+      <Box
+        sx={{
+          width:8,
+          height:8,
+          borderRadius:"50%",
+          bgcolor:current.color,
+          animation:
+            ["ONGOING"].includes(status)
+            ? "livePulse 2s infinite"
+            : undefined
+        }}
+      />
+      <CTypography
+        cvariant="c"
+        sx={{ color:current.color }}
+      >
+          {current.label}
+      </CTypography>
+    </Stack>
+  )
+}
+
 export default function IncidentsPage() {
+  const [formData, setFormData] = useState({ endpoint: '', methods: [], regions: [] })
+  
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value === 'string' ? value.split(',') : value,
+    }))
+  }
+
+  const handleResetFilter = (e) => {
+    setFormData({ endpoint: '', methods: [], regions: [] })
+  }
+
   return (
     <Box>
-      <Panel title="Incidents" subtitle="Track active and resolved issues across your APIs.">
-        <Grid container spacing={2.5}>
-          {incidents.map((incident) => (
-            <Grid item xs={12} md={6} key={incident.title}>
-              <Box sx={{ border: '1px solid rgba(255,255,255,0.7)', borderRadius: 4, p: 2.25, background: 'rgba(255,255,255,0.62)' }}>
-                <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1.5 }}>
-                  <CTypography cvariant="sub-heading">{incident.title}</CTypography>
-                  <Box sx={{ px: 1.2, py: 0.45, borderRadius: 999, background: incident.severity === 'Critical' ? 'rgba(197,72,77,0.16)' : 'rgba(245,158,11,0.16)', color: incident.severity === 'Critical' ? 'var(--error-color)' : 'var(--warning-color)', fontSize: '0.75rem', fontWeight: 700 }}>{incident.severity}</Box>
-                </Stack>
-                <Stack spacing={0.75}>
-                  <CTypography cvariant="caption">Started: {incident.started}</CTypography>
-                  <CTypography cvariant="caption">Recovered: {incident.recovered}</CTypography>
-                  <CTypography cvariant="caption">Duration: {incident.duration}</CTypography>
-                  <CTypography cvariant="caption">Root cause: {incident.rootCause}</CTypography>
-                  <CTypography cvariant="caption">Notification sent: {incident.notification}</CTypography>
-                </Stack>
-              </Box>
-            </Grid>
-          ))}
+      <Panel title='Incidents' subtitle='Track active and resolved issues across your APIs with clear impact details.'>
+        <Grid container spacing={2} sx={{ mb: '8px' }}>
+          <Grid item xs={12} md={4}>
+            <CTextField
+              cvariant='p'
+              name='endpoints'
+              label='Endpoint'
+              placeholder={`Payments API or api.example.com/payments`}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <CTextField
+              cvariant='p'
+              name='email'
+              label='Error'
+              placeholder={`500 Internal Server Error`}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <CSelect
+              multiple
+              cvariant='s'
+              name='regions'
+              label='Region'
+              value={formData.regions}
+              onChange={handleChange}
+              fullWidth
+            >
+              <MenuItem value={REGIONS.US.value}>{REGIONS.US.flag} {REGIONS.US.displayName}</MenuItem>
+              <MenuItem value={REGIONS.EU.value}>{REGIONS.EU.flag} {REGIONS.EU.displayName}</MenuItem>
+              <MenuItem value={REGIONS.SG.value}>{REGIONS.SG.flag} {REGIONS.SG.displayName}</MenuItem>
+            </CSelect>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Box>
+              <CButton size='large' label='Search' active startIcon={SearchRounded} cvariant='secondary' />
+              <CButton size='large' label='Reset Filter'sx={{ml: '8px'}} cvariant='t' />
+            </Box>
+          </Grid>
         </Grid>
+
+        <TableContainer
+          component={Paper}
+          sx={{
+            textAlign: 'center',
+            border: '1px solid var(--p-b-color)',
+            boxShadow: 'none !important',
+            borderRadius: '12px'
+          }}  
+        >
+          <Table size='small'>
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>Status</TableCell>
+                <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>Name</TableCell>
+                <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>URL</TableCell>
+                <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>Started</TableCell>
+                <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>Resolved</TableCell>
+                <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>Reason</TableCell>
+                <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>Last Check</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {incidents.map((incident) => (
+                <TableRow key={incident.name}>
+                  <TableCell><StatusBadge status={incident.status}/></TableCell>
+                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.name}</CTypography></TableCell>
+                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.url}</CTypography></TableCell>
+                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.startTime}</CTypography></TableCell>
+                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.resolveTime}</CTypography></TableCell>
+                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.reason}</CTypography></TableCell>
+                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.lastCheck}</CTypography></TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          component={Paper}
+          count={100}
+          page={1}
+          sx={{
+            textAlign: 'center',
+            border: '1px solid var(--p-b-color)',
+            borderRadius: '12px',
+            boxShadow: 'none',
+          }}
+          // onPageChange={(event, newPage) => setPage(newPage)}
+          rowsPerPageOptions={[]}
+          rowsPerPage={50}
+        />
       </Panel>
     </Box>
   )

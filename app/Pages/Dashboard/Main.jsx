@@ -44,7 +44,6 @@ import Link from 'next/link'
 
 const sidebarItems = [
   { label: 'Dashboard', icon: DashboardRounded },
-  { label: 'Endpoints', icon: CloudDoneRounded },
   { label: 'Incidents', icon: WarningRounded },
   { label: 'Notifications', icon: NotificationsRounded },
   { label: 'Team', icon: GroupRounded },
@@ -138,17 +137,30 @@ const Sidebar = ({ open, onClose, activeSection, onSelect }) => {
     )
   }
 
-  return <Box sx={{ width: 280, flexShrink: 0, display: { xs: 'none', lg: 'block' } }}>{content}</Box>
+  return (
+  <Box
+    sx={{
+      width: 280,
+      flexShrink: 0,
+      display: { xs: 'none', lg: 'block' },
+      position: 'sticky',
+      top: 0,
+      height: '100vh',
+      alignSelf: 'flex-start',
+    }}
+  >
+    {content}
+  </Box>
+)
+  // return <Box sx={{ width: 280, flexShrink: 0, display: { xs: 'none', lg: 'block' } }}>{content}</Box>
 }
 
 export default function Main() {
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [activeSection, setActiveSection] = useState('Endpoints')
+  const [activeSection, setActiveSection] = useState('Dashboard')
 
   const renderSection = () => {
     switch (activeSection) {
-      case 'Endpoints':
-        return <EndpointsPage />
       case 'Incidents':
         return <IncidentsPage />
       case 'Notifications':
@@ -169,12 +181,12 @@ export default function Main() {
   }
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', width: '100%' }}>
       <Sidebar open={mobileOpen} onClose={() => setMobileOpen(false)} activeSection={activeSection} onSelect={setActiveSection} />
 
-      <Box component='main' sx={{ flexGrow: 1, minWidth: 0 }}>
-        <Container maxWidth='xl' sx={{ py: { xs: 3, md: 4 } }}>
-          <Stack direction='row' spacing={1.5} alignItems='center' sx={{ mb: 3, display: { lg: 'none' } }}>
+      <Box position="sticky"  component='main' sx={{ flexGrow: 1, minWidth: 0 }}>
+        <Container maxWidth='xl' >
+          <Stack direction='row' spacing={1.5} alignItems='center' sx={{ mb: 3, mt: '16px', display: { lg: 'none' } }}>
             <IconButton
               disableRipple 
               sx={{
@@ -188,7 +200,15 @@ export default function Main() {
             </IconButton>
             <CTypography cvariant='c' sx={{ fontWeight: 700, color: 'var(--p-fg-color)' }}>{activeSection}</CTypography>
           </Stack>
-          {renderSection()}
+          <Box
+            sx={{
+              width: '100%',
+              background: 'var(--s-bg-color)',
+              py: '16px'
+            }}
+          >
+            {renderSection()}
+          </Box>
         </Container>
       </Box>
     </Box>

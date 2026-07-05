@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Box, Grid, Paper, Stack, MenuItem, TablePagination, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 import { AddRounded, SearchRounded } from '@mui/icons-material'
 import CButton from '../../../Components/CButton'
@@ -12,18 +12,18 @@ import REGIONS from '../Constants/REGIONS'
 
 const endpoints = [
   { name: 'Payments API', uptime:'93.132%', method: 'GET', url: 'https://api.example.com/payments', interval: '1 min', regions: ["US","EU"], status: 'HEALTHY', latency: '121ms', lastCheck: '2 min ago' },
+  { name: 'Auth Service', uptime:'78.112%', method: 'POST', url: 'https://api.example.com/auth', interval: '30 sec', regions: ["US","SG"], status: 'DOWN', latency: '245ms', lastCheck: '5 min ago' },
   { name: 'Auth Service', uptime:'78.112%', method: 'POST', url: 'https://api.example.com/auth', interval: '30 sec', regions: ["US","SG"], status: 'DEGRADED', latency: '245ms', lastCheck: '5 min ago' },
-  { name: 'Inventory API', uptime:'36.82%', method: 'GET', url: 'https://api.example.com/inventory', interval: '5 min', regions: ['SG'], status: 'DOWN', latency: '-', lastCheck: '10 min ago' },
   { name: 'Inventory API', uptime:'36.82%', method: 'GET', url: 'https://api.example.com/inventory', interval: '5 min', regions: ["SG"], status: 'PAUSED', latency: '-', lastCheck: '10 min ago' }
 ]
 
 const StatusBadge = ({ status }) => {
   const map = {
-  HEALTHY: { label: "Healthy", color: "var(--success-color)", background: "rgba(34,197,94,.12)" },
-  DEGRADED: { label: "Degraded", color: "var(--warning-color)", background: "rgba(245,158,11,.12)" },
-  DOWN: { label: "Down", color: "var(--error-color)", background: "rgba(239,68,68,.12)" },
-  PAUSED: { label: "Paused", color: "var(--t-b-color)", background: "rgba(107,114,128,.12)" }
-}
+    HEALTHY: { label: "Healthy", color: "var(--success-color)", background: "rgba(34,197,94,.12)" },
+    DEGRADED: { label: "Degraded", color: "var(--warning-color)", background: "rgba(245,158,11,.12)" },
+    DOWN: { label: "Down", color: "var(--error-color)", background: "rgba(239,68,68,.12)" },
+    PAUSED: { label: "Paused", color: "var(--t-b-color)", background: "rgba(107,114,128,.12)" }
+  }
 
   const current = map[status] || map.healthy
   return (
@@ -62,9 +62,23 @@ const StatusBadge = ({ status }) => {
 }
 
 export default function EndpointsPage() {
+  const [formData, setFormData] = useState({ endpoint: '', methods: [], regions: [] })
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value === 'string' ? value.split(',') : value,
+    }))
+  }
+
+  const handleResetFilter = (e) => {
+    setFormData({ endpoint: '', methods: [], regions: [] })
+  }
+
   return (
     <Box>
-      <Panel title='Endpoints' subtitle='Manage your monitored services and add new checks.' actions={<CButton label='Add Endpoint' size="normal" active cvariant='p' startIcon={AddRounded} />}>
+      <Panel title='Endpoints' subtitle='Manage your monitored services and add new checks.'>
         <Grid container spacing={2} sx={{ mb: '8px' }}>
           <Grid item xs={12} md={4}>
             <CTextField
@@ -77,9 +91,12 @@ export default function EndpointsPage() {
           </Grid>
           <Grid item xs={12} md={4}>
             <CSelect
+              multiple
               cvariant='s'
-              name='email'
+              name='methods'
               label='Method'
+              value={formData.methods}
+              onChange={handleChange}
               fullWidth
             >
               <MenuItem value={'POST'}>POST</MenuItem>
@@ -88,9 +105,12 @@ export default function EndpointsPage() {
           </Grid>
           <Grid item xs={12} md={4}>
             <CSelect
+              multiple
               cvariant='s'
-              name='email'
+              name='regions'
               label='Region'
+              value={formData.regions}
+              onChange={handleChange}
               fullWidth
             >
               <MenuItem value={REGIONS.US.value}>{REGIONS.US.flag} {REGIONS.US.displayName}</MenuItem>
@@ -101,7 +121,7 @@ export default function EndpointsPage() {
           <Grid item xs={12} md={4}>
             <Box>
               <CButton size='large' label='Search' active startIcon={SearchRounded} cvariant='secondary' />
-              <CButton size='large' label='Reset Filter'sx={{ml: '8px'}} startIcon={SearchRounded} cvariant='t' />
+              <CButton size='large' label='Reset Filter'sx={{ml: '8px'}} onClick={handleResetFilter} cvariant='t' />
             </Box>
           </Grid>
         </Grid>
@@ -111,7 +131,7 @@ export default function EndpointsPage() {
           sx={{
             textAlign: 'center',
             border: '1px solid var(--p-b-color)',
-            boxShadow: 'none !important',
+            boxShadow: 'none',
             borderRadius: '12px'
           }}  
         >
@@ -155,6 +175,7 @@ export default function EndpointsPage() {
             border: '1px solid var(--p-b-color)',
             borderRadius: '12px',
             boxShadow: 'none',
+            mt: '8px'
           }}
           // onPageChange={(event, newPage) => setPage(newPage)}
           rowsPerPageOptions={[]}
