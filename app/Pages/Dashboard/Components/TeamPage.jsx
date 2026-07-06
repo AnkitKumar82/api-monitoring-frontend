@@ -175,7 +175,7 @@ export default function TeamPage() {
                 <TableCell sx={{ color: 'var(--s-fg-color)', fontWeight: 700 }}>Name</TableCell>
                 <TableCell sx={{ color: 'var(--s-fg-color)', fontWeight: 700 }}>Email</TableCell>
                 <TableCell sx={{ color: 'var(--s-fg-color)', fontWeight: 700 }}>Role</TableCell>
-                <TableCell sx={{ color: 'var(--s-fg-color)', fontWeight: 700 }}>Actions</TableCell>
+                <TableCell></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
