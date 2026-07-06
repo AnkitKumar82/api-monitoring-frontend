@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Grid, Stack, Typography, IconButton, Tooltip, Badge } from '@mui/material'
+import { Box, Grid, Paper, Stack, MenuItem, TablePagination, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, Tooltip } from '@mui/material'
 import CTypography from '../../../Components/CTypography'
 import CButton from '../../../Components/CButton'
 import CModal from '../../../Components/CModal'
@@ -68,6 +68,7 @@ export default function NotificationsPage() {
   const [testLoading, setTestLoading] = useState({})
   const [formData, setFormData] = useState({
     name: '',
+    type: 'Email', // New field for channel type
     recipients: [''],
     webhookUrl: ''
   })
@@ -107,6 +108,7 @@ export default function NotificationsPage() {
     setEditingChannel(null)
     setFormData({
       name: '',
+      type: type.charAt(0).toUpperCase() + type.slice(1), // Set default type
       recipients: [''],
       webhookUrl: ''
     })
@@ -120,8 +122,9 @@ export default function NotificationsPage() {
     setEditingChannel(channel)
     setFormData({
       name: channel.name,
-      recipients: channel.destination || [''],
-      webhookUrl: channel.destination || ''
+      type: channel.type,
+      recipients: Array.isArray(channel.destination) ? channel.destination : [''],
+      webhookUrl: !Array.isArray(channel.destination) ? channel.destination : ''
     })
     setErrors({})
     setOpenModal(true)
@@ -144,7 +147,7 @@ export default function NotificationsPage() {
       newErrors.name = 'Name must be less than 50 characters'
     }
 
-    if (modalType === 'email') {
+    if (formData.type === 'Email') {
       // Validate recipients
       if (formData.recipients.length === 0 || (formData.recipients.length === 1 && !formData.recipients[0].trim())) {
         newErrors.recipients = 'At least one recipient is required'
@@ -161,7 +164,7 @@ export default function NotificationsPage() {
           }
         }
       }
-    } else if (modalType === 'slack') {
+    } else if (formData.type === 'Slack') {
       // Validate webhook URL
       if (!formData.webhookUrl.trim()) {
         newErrors.webhookUrl = 'Webhook URL is required'
@@ -190,8 +193,8 @@ export default function NotificationsPage() {
         const newChannel = {
           id: channels.length + 1,
           name: formData.name,
-          type: modalType.charAt(0).toUpperCase() + modalType.slice(1),
-          destination: modalType === 'email' ? formData.recipients.filter(r => r.trim()) : formData.webhookUrl,
+          type: formData.type,
+          destination: formData.type === 'Email' ? formData.recipients.filter(r => r.trim()) : formData.webhookUrl,
           status: 'Active',
           usedBy: 0
         }
@@ -220,14 +223,14 @@ export default function NotificationsPage() {
 
   // Render recipient chips for email channels
   const renderRecipients = (recipients) => {
-    if (!recipients || !Array.isArray(recipients)) return <Typography variant="body2">No recipients</Typography>
+    if (!recipients || !Array.isArray(recipients)) return <CTypography cvariant="c">No recipients</CTypography>
     return (
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
         {recipients.slice(0, 3).map((recipient, index) => (
           <CChip key={index} label={recipient} size="small" sx={{ backgroundColor: 'rgba(79,156,187,0.08)' }} />
         ))}
         {recipients.length > 3 && (
-          <Typography variant="body2" sx={{ color: 'var(--t-fg-color)' }}>+{recipients.length - 3} more</Typography>
+          <CTypography cvariant="c" sx={{ color: 'var(--t-fg-color)' }}>+{recipients.length - 3} more</CTypography>
         )}
       </Box>
     )
@@ -240,9 +243,9 @@ export default function NotificationsPage() {
     } else {
       return (
         <Tooltip title={channel.destination}>
-          <Typography variant="body2" noWrap sx={{ maxWidth: 150 }}>
+          <CTypography cvariant="c" noWrap sx={{ maxWidth: 200 }}>
             {channel.destination}
-          </Typography>
+          </CTypography>
         </Tooltip>
       )
     }
@@ -308,79 +311,85 @@ export default function NotificationsPage() {
         <Grid container spacing={3} sx={{ mb: 4 }}>
           <Grid item xs={12} sm={4}>
             <Box sx={{ border: '1px solid var(--glass-border)', borderRadius: 2, p: 3, background: 'rgba(255,255,255,0.08)' }}>
-              <Typography variant="h6" sx={{ mb: 1 }}>Total Channels</Typography>
-              <Typography variant="h4" sx={{ fontWeight: 'bold' }}>{summaryData.totalChannels}</Typography>
+              <CTypography cvariant="h6" sx={{ mb: 1 }}>Total Channels</CTypography>
+              <CTypography cvariant="h4" sx={{ fontWeight: 'bold' }}>{summaryData.totalChannels}</CTypography>
             </Box>
           </Grid>
           <Grid item xs={12} sm={4}>
             <Box sx={{ border: '1px solid var(--glass-border)', borderRadius: 2, p: 3, background: 'rgba(255,255,255,0.08)' }}>
-              <Typography variant="h6" sx={{ mb: 1 }}>Email Channels</Typography>
-              <Typography variant="h4" sx={{ fontWeight: 'bold' }}>{summaryData.emailChannels}</Typography>
+              <CTypography cvariant="h6" sx={{ mb: 1 }}>Email Channels</CTypography>
+              <CTypography cvariant="h4" sx={{ fontWeight: 'bold' }}>{summaryData.emailChannels}</CTypography>
             </Box>
           </Grid>
           <Grid item xs={12} sm={4}>
             <Box sx={{ border: '1px solid var(--glass-border)', borderRadius: 2, p: 3, background: 'rgba(255,255,255,0.08)' }}>
-              <Typography variant="h6" sx={{ mb: 1 }}>Slack Channels</Typography>
-              <Typography variant="h4" sx={{ fontWeight: 'bold' }}>{summaryData.slackChannels}</Typography>
+              <CTypography cvariant="h6" sx={{ mb: 1 }}>Slack Channels</CTypography>
+              <CTypography cvariant="h4" sx={{ fontWeight: 'bold' }}>{summaryData.slackChannels}</CTypography>
             </Box>
           </Grid>
         </Grid>
 
         {/* Notification Channels Table */}
-        <Box sx={{ border: '1px solid var(--glass-border)', borderRadius: 2, overflow: 'hidden' }}>
-          <Box sx={{ display: { xs: 'none', sm: 'table-header-group' } }}>
-            <Grid container sx={{ bgcolor: 'rgba(255,255,255,0.08)', p: 2 }}>
-              <Grid item xs={3} sx={{ fontWeight: 'bold' }}>Name</Grid>
-              <Grid item xs={2} sx={{ fontWeight: 'bold' }}>Type</Grid>
-              <Grid item xs={3} sx={{ fontWeight: 'bold' }}>Destination</Grid>
-              <Grid item xs={2} sx={{ fontWeight: 'bold' }}>Status</Grid>
-              <Grid item xs={1} sx={{ fontWeight: 'bold' }}>Used By</Grid>
-              <Grid item xs={1} sx={{ fontWeight: 'bold' }}>Actions</Grid>
-            </Grid>
-          </Box>
-          <Box>
-            {channels.length === 0 ? (
-              <Box sx={{ p: 4, textAlign: 'center' }}>
-                <Typography variant="h6">No notification channels configured.</Typography>
-                <Typography variant="body2" sx={{ mb: 2 }}>Create your first notification channel to receive monitoring alerts.</Typography>
-                <CButton
-                  label="Create Notification Channel"
-                  cvariant="ghost"
-                  startIcon={AddIcon}
-                  onClick={() => handleAddChannel('email')}
-                />
-              </Box>
-            ) : (
-              channels.map((channel) => (
-                <Box key={channel.id} sx={{ border: '1px solid var(--glass-border)', borderBottom: 'none', p: 2 }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} sm={3}>
-                      <Typography variant="body1">{channel.name}</Typography>
-                    </Grid>
-                    <Grid item xs={12} sm={2}>
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        {channel.type === 'Email' ? <EmailIcon sx={{ mr: 1, fontSize: '1rem' }} /> : <EmailIcon sx={{ mr: 1, fontSize: '1rem' }} />}
-                        <Typography variant="body2">{channel.type}</Typography>
-                      </Box>
-                    </Grid>
-                    <Grid item xs={12} sm={3}>
-                      {renderDestination(channel)}
-                    </Grid>
-                    <Grid item xs={12} sm={2}>
-                      {renderStatusBadge(channel.status)}
-                    </Grid>
-                    <Grid item xs={12} sm={1}>
-                      <Typography variant="body2">{channel.usedBy === 0 ? 'Not Assigned' : `${channel.usedBy} Endpoints`}</Typography>
-                    </Grid>
-                    <Grid item xs={12} sm={1}>
-                      {renderActions(channel)}
-                    </Grid>
-                  </Grid>
-                </Box>
-              ))
-            )}
-          </Box>
-        </Box>
+        <TableContainer
+          component={Paper}
+          sx={{
+            textAlign: 'center',
+            border: '1px solid var(--p-b-color)',
+            boxShadow: 'none',
+            borderRadius: '12px'
+          }}  
+        >
+          <Table size='small'>
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>Channel Name</TableCell>
+                <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>URL/Email</TableCell>
+                <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>Channel Type</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {channels.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={3} sx={{ textAlign: 'center' }}>
+                    <Box sx={{ p: 4 }}>
+                      <CTypography cvariant="h6">No notification channels configured.</CTypography>
+                      <CTypography cvariant="c" sx={{ mb: 2 }}>Create your first notification channel to receive monitoring alerts.</CTypography>
+                      <CButton
+                        label="Create Notification Channel"
+                        cvariant="ghost"
+                        startIcon={AddIcon}
+                        onClick={() => handleAddChannel('email')}
+                      />
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                channels.map((channel) => (
+                  <TableRow key={channel.id} sx={{':hover': { cursor: 'pointer', bgcolor: 'var(--t-bg-color)' }}}>
+                    <TableCell><CTypography cvariant="c">{channel.name}</CTypography></TableCell>
+                    <TableCell>{renderDestination(channel)}</TableCell>
+                    <TableCell><CTypography cvariant="c">{channel.type}</CTypography></TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          component={Paper}
+          count={100}
+          page={1}
+          sx={{
+            textAlign: 'center',
+            border: '1px solid var(--p-b-color)',
+            borderRadius: '12px',
+            boxShadow: 'none',
+            mt: '8px'
+          }}
+          // onPageChange={(event, newPage) => setPage(newPage)}
+          rowsPerPageOptions={[]}
+          rowsPerPage={50}
+        />
       </Panel>
 
       {/* Add/Edit Channel Modal */}
@@ -402,9 +411,26 @@ export default function NotificationsPage() {
             sx={{ mb: 2 }}
           />
           
-          {modalType === 'email' ? (
+          {/* Channel Type Selection */}
+          <Box sx={{ mb: 2 }}>
+            <CTextField
+              fullWidth
+              select
+              label="Channel Type"
+              name="type"
+              value={formData.type}
+              onChange={handleInputChange}
+              error={!!errors.type}
+              helperText={errors.type || 'Select channel type'}
+            >
+              <MenuItem value={'Email'}>Email</MenuItem>
+              <MenuItem value={'Slack'}>Slack Webhook</MenuItem>
+            </CTextField>
+          </Box>
+          
+          {formData.type === 'Email' ? (
             <Box>
-              <Typography variant="subtitle2" sx={{ mb: 1 }}>Email Recipients</Typography>
+              <CTypography cvariant="subtitle2" sx={{ mb: 1 }}>Email Recipients</CTypography>
               {formData.recipients.map((recipient, index) => (
                 <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                   <CTextField
@@ -433,7 +459,7 @@ export default function NotificationsPage() {
             </Box>
           ) : (
             <Box>
-              <Typography variant="subtitle2" sx={{ mb: 1 }}>Slack Webhook URL</Typography>
+              <CTypography cvariant="subtitle2" sx={{ mb: 1 }}>Slack Webhook URL</CTypography>
               <CTextField
                 fullWidth
                 label="Webhook URL"
