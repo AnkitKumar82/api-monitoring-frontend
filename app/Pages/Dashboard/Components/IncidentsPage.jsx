@@ -144,7 +144,7 @@ export default function IncidentsPage() {
             </TableHead>
             <TableBody>
               {incidents.map((incident) => (
-                <TableRow key={incident.name}>
+                <TableRow key={incident.name} sx={{':hover': { cursor: 'pointer', bgcolor: 'var(--t-bg-color)' }}}>
                   <TableCell><StatusBadge status={incident.status}/></TableCell>
                   <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.name}</CTypography></TableCell>
                   <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.startTime}</CTypography></TableCell>

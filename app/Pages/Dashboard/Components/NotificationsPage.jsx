@@ -246,7 +246,7 @@ export default function NotificationsPage() {
     return (
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
         {recipients.slice(0, 3).map((recipient, index) => (
-          <CChip key={index} cvariant='s' label={recipient} clickable size="small" labelStyle={{fontSize: '0.8rem' }} sx={{ fontSize: '0.8rem', bgcolor: 'var(--t-bg-color)', color: 'var(--p-fg-color)', }} />
+          <CChip key={index} cvariant='s' label={recipient} size="small" labelStyle={{fontSize: '0.8rem' }} sx={{ fontSize: '0.8rem', bgcolor: 'var(--t-bg-color)', color: 'var(--p-fg-color)', }} />
         ))}
         {recipients.length > 3 && (
           <CTypography cvariant="c" sx={{ color: 'var(--p-fg-color)' }}>+{recipients.length - 3} more</CTypography>
@@ -364,7 +364,7 @@ export default function NotificationsPage() {
                 </TableRow>
               ) : (
                 channels.map((channel) => (
-                  <TableRow key={channel.id} sx={{':hover': { cursor: 'pointer', bgcolor: 'var(--t-bg-color)' }}}>
+                  <TableRow key={channel.id}>
                     <TableCell><CTypography cvariant="c">{channel.name}</CTypography></TableCell>
                     <TableCell>{renderDestination(channel)}</TableCell>
                     <TableCell><CTypography cvariant="c">{channel.type}</CTypography></TableCell>
@@ -488,6 +488,7 @@ export default function NotificationsPage() {
         onClose={cancelDelete}
         aria-labelledby="delete-dialog-title"
         aria-describedby="delete-dialog-description"
+        sx={{ p: '12px' }}
       >
         <DialogTitle id="delete-dialog-title">
           {channelToDelete ? `Delete ${channelToDelete.name}` : 'Delete Notification Channel'}
