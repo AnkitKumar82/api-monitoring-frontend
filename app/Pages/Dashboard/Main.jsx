@@ -173,7 +173,7 @@ export default function Main() {
         return <TeamPage />
       case 'settings':
         return <SettingsPage />
-      case 'status Pages':
+      case 'status pages':
         return <StatusPagesPage />
       case 'billing':
         return <BillingPage />
