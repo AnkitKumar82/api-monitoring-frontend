@@ -39,6 +39,7 @@ import TeamPage from './Components/TeamPage'
 import SettingsPage from './Components/SettingsPage'
 import StatusPagesPage from './Components/StatusPagesPage'
 import BillingPage from './Components/BillingPage'
+import CreateEndpointsPage from './Components/CreateEndpointsPage'
 import AppIcon from '../../Commons/AppIcon'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -176,7 +177,7 @@ export default function Main() {
       case 'billing':
         return <BillingPage />
       default:
-        return <DashboardOverview />
+        return <CreateEndpointsPage />
     }
   }
 
