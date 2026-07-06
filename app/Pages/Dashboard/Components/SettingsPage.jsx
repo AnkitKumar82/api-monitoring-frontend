@@ -4,10 +4,19 @@ import CTypography from '../../../Components/CTypography'
 import CButton from '../../../Components/CButton'
 import CTextField from '../../../Components/CTextField'
 import Panel from './Panel'
-import { LockRounded as LockIcon, DeleteRounded as DeleteIcon } from '@mui/icons-material'
+import { LockRounded as LockIcon, DeleteRounded as DeleteIcon, VisibilityRounded as VisibilityIcon, VisibilityOffRounded as VisibilityOffIcon } from '@mui/icons-material'
 
 export default function SettingsPage() {
   const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false)
+  const [showPasswordFields, setShowPasswordFields] = useState(false)
+  const [formData, setFormData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  })
+  const [showPassword, setShowPassword] = useState(false)
+  const [errors, setErrors] = useState({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Mock user data - in real app this would come from auth context or API
   const userData = {
@@ -29,10 +38,83 @@ export default function SettingsPage() {
     setOpenDeleteConfirm(false)
   }
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }))
+    }
+  }
+
+  const validatePasswordForm = () => {
+    const newErrors = {}
+    
+    if (!formData.currentPassword) {
+      newErrors.currentPassword = 'Current password is required'
+    }
+    
+    if (!formData.newPassword) {
+      newErrors.newPassword = 'New password is required'
+    } else if (formData.newPassword.length < 8) {
+      newErrors.newPassword = 'Password must be at least 8 characters'
+    }
+    
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = 'Please confirm your new password'
+    } else if (formData.newPassword !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match'
+    }
+    
+    return newErrors
+  }
+
   const handleResetPassword = () => {
-    // In a real app, this would redirect to password reset page
-    // For now we'll just show an alert to demonstrate the concept
-    alert('Redirecting to password reset page...')
+    // Show the password change form instead of redirecting
+    setShowPasswordFields(true)
+    setErrors({})
+  }
+
+  const handleSubmitPasswordChange = (e) => {
+    e.preventDefault()
+    const newErrors = validatePasswordForm()
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      return
+    }
+
+    setIsSubmitting(true)
+    
+    // Simulate API call to update password
+    setTimeout(() => {
+      setIsSubmitting(false)
+      // In a real app, you would handle the response here
+      console.log('Password changed successfully:', formData)
+      setShowPasswordFields(false)
+      setFormData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      })
+      alert('Password updated successfully!')
+    }, 1000)
+  }
+
+  const cancelPasswordChange = () => {
+    setShowPasswordFields(false)
+    setFormData({
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    })
+    setErrors({})
   }
 
   return (
@@ -50,9 +132,7 @@ export default function SettingsPage() {
                 InputProps={{
                   readOnly: true,
                 }}
-                sx={{
-                  mt: '12px'
-                }}
+                sx={{ mt: '12px' }}
                 fullWidth
                 cvariant="s"
               />
@@ -66,13 +146,68 @@ export default function SettingsPage() {
             <Box sx={{ flexDirection: 'column', height: '100%' }}>
               <CTypography cvariant="c" sx={{ color: 'var(--p-fg-color)',fontWeight: '600' }}>Password</CTypography>
               <CTypography cvariant="caption" sx={{ mb: '12px' }}>Change your account password</CTypography>
-              <CButton
-                label="Change Password"
-                cvariant="s"
-                active
-                // startIcon={LockIcon}
-                onClick={handleResetPassword}
-              />
+              
+              {showPasswordFields ? (
+                <Box component="form" onSubmit={handleSubmitPasswordChange} sx={{ mt: 1 }}>
+                  <CTextField
+                    label="Current Password"
+                    name="currentPassword"
+                    type={showPassword ? 'text' : 'password'}
+                    value={formData.currentPassword}
+                    onChange={handleInputChange}
+                    error={!!errors.currentPassword}
+                    helperText={errors.currentPassword || 'Enter your current password'}
+                    fullWidth
+                    helperTextStyle={{mb: 1}}
+                  />
+                  
+                  <CTextField
+                    label="New Password"
+                    name="newPassword"
+                    type={showPassword ? 'text' : 'password'}
+                    value={formData.newPassword}
+                    onChange={handleInputChange}
+                    error={!!errors.newPassword}
+                    helperText={errors.newPassword || 'At least 8 characters'}
+                    fullWidth
+                    helperTextStyle={{mb: 1}}
+                  />
+                  
+                  <CTextField
+                    label="Confirm New Password"
+                    name="confirmPassword"
+                    type={showPassword ? 'text' : 'password'}
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    error={!!errors.confirmPassword}
+                    helperText={errors.confirmPassword}
+                    fullWidth
+                    helperTextStyle={{ mb: 2 }}
+                  />
+                  
+                  <Box sx={{ mt: 2, display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
+                    <CButton 
+                      label="Cancel" 
+                      cvariant="ghost" 
+                      onClick={cancelPasswordChange} 
+                    />
+                    <CButton 
+                      label={isSubmitting ? "Updating..." : "Update Password"} 
+                      cvariant="primary" 
+                      type="submit" 
+                      disabled={isSubmitting}
+                    />
+                  </Box>
+                </Box>
+              ) : (
+                <CButton
+                  label="Change Password"
+                  cvariant="s"
+                  active
+                  // startIcon={LockIcon}
+                  onClick={handleResetPassword}
+                />
+              )}
             </Box>
           </Grid>
         </Grid>
@@ -114,15 +249,12 @@ export default function SettingsPage() {
           Confirm Account Deletion
         </DialogTitle>
         <DialogContent>
-          <Typography cvariant="c" sx={{ mb: 1 }}>
+          <CTypography sx={{ color: 'var(--p-fg-color)' ,mb: 1 }}>
             Are you sure you want to delete your account?
-          </Typography>
-          <Typography cvariant="c" sx={{ mb: 1 }}>
-            This action cannot be undone and will permanently remove all data associated with this email address.
-          </Typography>
-          <Typography cvariant="c" sx={{ color: 'var(--d-fg-color)' }}>
+          </CTypography>
+          <CTypography cvariant="c" sx={{ color: 'var(--red-color)' }}>
             Warning: All your account details, settings, and associated data will be permanently deleted. This action is irreversible.
-          </Typography>
+          </CTypography>
         </DialogContent>
         <DialogActions>
           <CButton label="Cancel" cvariant="ghost" onClick={cancelDelete} />
