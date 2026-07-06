@@ -67,7 +67,7 @@ export default function CIconButton (props) {
         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         ':hover': {
           cursor: 'pointer',
-          bgcolor: 'var(--s-bg-color)',
+          bgcolor: 'inherit',
           border: '1px solid var(--glass-border)'
         }
       }
@@ -84,7 +84,7 @@ export default function CIconButton (props) {
         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
         ':hover': {
           cursor: 'pointer',
-          border: '1px solid var(--p-fg-color)'
+          border: '1px solid var(--p-b-color)'
         }
       }
       break
@@ -145,7 +145,7 @@ export default function CIconButton (props) {
       sx={{
         width: '20px',
         height: '20px',
-        borderRadius: '0px',
+        borderRadius: '12px',
         ...(rounded && { borderRadius: '99999px' }),
         ...variantStyle,
         ...iconButtonStyle

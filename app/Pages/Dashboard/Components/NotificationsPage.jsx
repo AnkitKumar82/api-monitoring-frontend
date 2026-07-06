@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import { Box, Grid, Paper, Stack, MenuItem, TablePagination, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, Tooltip } from '@mui/material'
+import { Box, Grid, Paper, Stack, MenuItem, TablePagination, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material'
 import CTypography from '../../../Components/CTypography'
 import CButton from '../../../Components/CButton'
+import CSelect from '../../../Components/CSelect'
 import CModal from '../../../Components/CModal'
 import CTextField from '../../../Components/CTextField'
 import CChip from '../../../Components/CChip'
@@ -74,6 +75,9 @@ export default function NotificationsPage() {
   })
   const [errors, setErrors] = useState({})
 
+  const [openEditDeleteModal, setOpenEditDeleteModal] = useState(false)
+  const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false)
+  const [channelToDelete, setChannelToDelete] = useState(null)
   // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -102,7 +106,7 @@ export default function NotificationsPage() {
     }
   }
 
-  // Open modal for adding new channel
+// Open modal for adding new channel
   const handleAddChannel = (type) => {
     setModalType(type)
     setEditingChannel(null)
@@ -116,7 +120,7 @@ export default function NotificationsPage() {
     setOpenModal(true)
   }
 
-  // Open modal for editing existing channel
+// Open modal for editing existing channel
   const handleEditChannel = (channel) => {
     setModalType(channel.type.toLowerCase())
     setEditingChannel(channel)
@@ -179,7 +183,7 @@ export default function NotificationsPage() {
     return Object.keys(newErrors).length === 0
   }
 
-  // Submit form
+// Submit form
   const handleSubmit = (e) => {
     e.preventDefault()
     if (validateForm()) {
@@ -206,9 +210,24 @@ export default function NotificationsPage() {
 
   // Delete channel
   const handleDelete = (channelId) => {
-    if (window.confirm('Are you sure you want to delete this notification channel? Endpoints using this channel will no longer receive notifications.')) {
-      setChannels(prev => prev.filter(channel => channel.id !== channelId))
+    const channel = channels.find(c => c.id === channelId);
+    setChannelToDelete(channel);
+    setOpenDeleteConfirm(true);
+  }
+
+  // Confirm delete
+  const confirmDelete = () => {
+    if (channelToDelete) {
+      setChannels(prev => prev.filter(channel => channel.id !== channelToDelete.id))
+      setOpenDeleteConfirm(false);
+      setChannelToDelete(null);
     }
+  }
+
+  // Cancel delete
+  const cancelDelete = () => {
+    setOpenDeleteConfirm(false);
+    setChannelToDelete(null);
   }
 
   // Test notification
@@ -221,7 +240,7 @@ export default function NotificationsPage() {
     }, 1500)
   }
 
-  // Render recipient chips for email channels
+// Render recipient chips for email channels
   const renderRecipients = (recipients) => {
     if (!recipients || !Array.isArray(recipients)) return <CTypography cvariant="c">No recipients</CTypography>
     return (
@@ -236,7 +255,7 @@ export default function NotificationsPage() {
     )
   }
 
-  // Render destination based on type
+// Render destination based on type
   const renderDestination = (channel) => {
     if (channel.type === 'Email') {
       return renderRecipients(channel.destination)
@@ -251,7 +270,7 @@ export default function NotificationsPage() {
     }
   }
 
-  // Render status badge
+// Render status badge
   const renderStatusBadge = (status) => {
     let color = 'success'
     if (status === 'Invalid') color = 'error'
@@ -263,30 +282,8 @@ export default function NotificationsPage() {
   const renderActions = (channel) => {
     return (
       <Stack direction="row" spacing={1}>
-        <Tooltip title="View">
-          <IconButton size="small" onClick={() => handleEditChannel(channel)}>
-            <VisibilityIcon sx={{ fontSize: '1rem' }} />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Edit">
-          <IconButton size="small" onClick={() => handleEditChannel(channel)}>
-            <EditIcon sx={{ fontSize: '1rem' }} />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Delete">
-          <IconButton size="small" onClick={() => handleDelete(channel.id)}>
-            <DeleteIcon sx={{ fontSize: '1rem' }} />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Test Notification">
-          <IconButton size="small" onClick={() => handleTestNotification(channel.id)} disabled={testLoading[channel.id]}>
-            {testLoading[channel.id] ? (
-              <NotificationsIcon sx={{ fontSize: '1rem' }} /> // Could use a spinner here if needed
-            ) : (
-              <NotificationsIcon sx={{ fontSize: '1rem' }} />
-            )}
-          </IconButton>
-        </Tooltip>
+        <CButton label='Edit'  active cvariant='t' onClick={() => handleEditChannel(channel)}/>
+        <CButton label='Delete'  active cvariant='t'  onClick={() => handleDelete(channel.id)}/>
       </Stack>
     )
   }
@@ -299,8 +296,9 @@ export default function NotificationsPage() {
         actions={
           <Stack direction="row" spacing={1}>
             <CButton
+              active
               label="Add Notification Channel"
-              cvariant="ghost"
+              cvariant="s"
               startIcon={AddIcon}
               onClick={() => handleAddChannel('email')}
             />
@@ -308,20 +306,20 @@ export default function NotificationsPage() {
         }
       >
         {/* Summary Cards */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} sm={4}>
+        <Grid container spacing={3} sx={{ mb: 3 }}>
+          <Grid item xs={4} sm={4} md={4}>
             <Box sx={{ border: '1px solid var(--glass-border)', borderRadius: 2, p: 3, background: 'rgba(255,255,255,0.08)' }}>
               <CTypography cvariant="h6" sx={{ mb: 1 }}>Total Channels</CTypography>
               <CTypography cvariant="h4" sx={{ fontWeight: 'bold' }}>{summaryData.totalChannels}</CTypography>
             </Box>
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={4} sm={4} md={4}>
             <Box sx={{ border: '1px solid var(--glass-border)', borderRadius: 2, p: 3, background: 'rgba(255,255,255,0.08)' }}>
               <CTypography cvariant="h6" sx={{ mb: 1 }}>Email Channels</CTypography>
               <CTypography cvariant="h4" sx={{ fontWeight: 'bold' }}>{summaryData.emailChannels}</CTypography>
             </Box>
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={4} sm={4} md={4}>
             <Box sx={{ border: '1px solid var(--glass-border)', borderRadius: 2, p: 3, background: 'rgba(255,255,255,0.08)' }}>
               <CTypography cvariant="h6" sx={{ mb: 1 }}>Slack Channels</CTypography>
               <CTypography cvariant="h4" sx={{ fontWeight: 'bold' }}>{summaryData.slackChannels}</CTypography>
@@ -345,6 +343,7 @@ export default function NotificationsPage() {
                 <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>Channel Name</TableCell>
                 <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>URL/Email</TableCell>
                 <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>Channel Type</TableCell>
+                <TableCell></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -369,6 +368,9 @@ export default function NotificationsPage() {
                     <TableCell><CTypography cvariant="c">{channel.name}</CTypography></TableCell>
                     <TableCell>{renderDestination(channel)}</TableCell>
                     <TableCell><CTypography cvariant="c">{channel.type}</CTypography></TableCell>
+                    <TableCell>
+                      {renderActions(channel)}
+                    </TableCell>
                   </TableRow>
                 ))
               )}
@@ -398,8 +400,9 @@ export default function NotificationsPage() {
         onClose={handleCloseModal}
         title={editingChannel ? `Edit ${editingChannel.name}` : `Add ${modalType.charAt(0).toUpperCase() + modalType.slice(1)} Notification Channel`}
         maxWidth="sm"
+        sx={{ p: 2, minWidth: '60vw',  }}
       >
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2, }}>
           <CTextField
             fullWidth
             label="Notification Name"
@@ -408,34 +411,32 @@ export default function NotificationsPage() {
             onChange={handleInputChange}
             error={!!errors.name}
             helperText={errors.name || 'Required'}
-            sx={{ mb: 2 }}
           />
           
           {/* Channel Type Selection */}
-          <Box sx={{ mb: 2 }}>
-            <CTextField
-              fullWidth
-              select
-              label="Channel Type"
-              name="type"
+          <Box sx={{ mb: 2, mt: 2 }}>
+            <CSelect
+              cvariant='s'
+              name='type'
+              label='Channel Type'
               value={formData.type}
               onChange={handleInputChange}
               error={!!errors.type}
-              helperText={errors.type || 'Select channel type'}
+              helperText={errors.type}
+              fullWidth
             >
               <MenuItem value={'Email'}>Email</MenuItem>
               <MenuItem value={'Slack'}>Slack Webhook</MenuItem>
-            </CTextField>
+            </CSelect>
           </Box>
           
           {formData.type === 'Email' ? (
             <Box>
-              <CTypography cvariant="subtitle2" sx={{ mb: 1 }}>Email Recipients</CTypography>
               {formData.recipients.map((recipient, index) => (
                 <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                   <CTextField
                     fullWidth
-                    label={`Recipient ${index + 1}`}
+                    label={`Email Recipient ${index + 1}`}
                     value={recipient}
                     onChange={(e) => handleRecipientChange(index, e.target.value)}
                     error={!!errors.recipients}
@@ -443,9 +444,11 @@ export default function NotificationsPage() {
                     sx={{ mr: 1 }}
                   />
                   {formData.recipients.length > 1 && (
-                    <IconButton size="small" onClick={() => removeRecipient(index)}>
-                      <DeleteIcon sx={{ fontSize: '1rem' }} />
-                    </IconButton>
+                    <CButton
+                      label="Delete"
+                      cvariant="ghost"
+                      onClick={() => removeRecipient(index)}
+                    />
                   )}
                 </Box>
               ))}
@@ -459,15 +462,14 @@ export default function NotificationsPage() {
             </Box>
           ) : (
             <Box>
-              <CTypography cvariant="subtitle2" sx={{ mb: 1 }}>Slack Webhook URL</CTypography>
               <CTextField
                 fullWidth
-                label="Webhook URL"
+                label="Slack Webhook URL"
                 name="webhookUrl"
                 value={formData.webhookUrl}
                 onChange={handleInputChange}
                 error={!!errors.webhookUrl}
-                helperText={errors.webhookUrl || 'Maximum 5 Slack channels allowed on the current plan.'}
+                helperText={errors.webhookUrl}
                 sx={{ mb: 2 }}
               />
             </Box>
@@ -479,6 +481,27 @@ export default function NotificationsPage() {
           </Box>
         </Box>
       </CModal>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={openDeleteConfirm}
+        onClose={cancelDelete}
+        aria-labelledby="delete-dialog-title"
+        aria-describedby="delete-dialog-description"
+      >
+        <DialogTitle id="delete-dialog-title">
+          {channelToDelete ? `Delete ${channelToDelete.name}` : 'Delete Notification Channel'}
+        </DialogTitle>
+        <DialogContent>
+          <CTypography cvariant="c">
+            Are you sure you want to delete this notification channel? Endpoints using this channel will no longer receive notifications.
+          </CTypography>
+        </DialogContent>
+        <DialogActions>
+          <CButton label="Cancel" cvariant="ghost" onClick={cancelDelete} />
+          <CButton label="Delete" cvariant="danger" onClick={confirmDelete} />
+        </DialogActions>
+      </Dialog>
     </Box>
   )
 }

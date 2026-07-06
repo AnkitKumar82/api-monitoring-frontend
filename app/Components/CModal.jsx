@@ -4,17 +4,15 @@ import {
   Box,
   Modal,
   Slide,
-  Grow
+  Grow,
+  useMediaQuery,
+  useTheme
 } from '@mui/material'
 
 export default function CModal (props) {
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    const isMobileVal = window.innerWidth <= 468
-    setIsMobile(isMobileVal)
-  }, [])
-
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
+  
   const {
     sx = {},
     style = {},
