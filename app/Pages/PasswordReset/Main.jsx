@@ -3,7 +3,6 @@ import Link from 'next/link'
 
 import {
   Box,
-  Card,
   Container,
   Grid,
   Stack,
@@ -16,27 +15,11 @@ import LockRoundedIcon from '@mui/icons-material/LockRounded'
 import VpnKeyRoundedIcon from '@mui/icons-material/VpnKeyRounded'
 import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded'
 import VisibilityOffRoundedIcon from '@mui/icons-material/VisibilityOffRounded'
+import GoogleIcon from '@mui/icons-material/Google'
 
 import CTypography from '../../Components/CTypography'
 import CTextField from '../../Components/CTextField'
 import CButton from '../../Components/CButton'
-
-const GlassCard = ({ style = {}, children }) => (
-  <Card
-    sx={{
-      height: '100%',
-      background: 'var(--s-bg-color)',
-      backdropFilter: 'blur(20px)',
-      border: '1px solid var(--p-b-color)',
-      borderRadius: '20px',
-      boxShadow:
-        '0 8px 32px rgba(15,23,42,.12), inset 0 1px 0 rgba(255,255,255,.35)',
-      ...style
-    }}
-  >
-    {children}
-  </Card>
-)
 
 export default function Main() {
   const [currentStep, setCurrentStep] = useState('email') // 'email', 'otp', 'password'
@@ -180,6 +163,27 @@ export default function Main() {
           fullWidth
           sx={{ py: 1.5 }}
           disabled={isSubmitting}
+        />
+
+        {/* Divider with "Or Continue With" text */}
+        <Stack direction='row' alignItems='center' spacing={2} sx={{ my: 2 }}>
+          <Divider sx={{ flex: 1 }} />
+          <Typography variant='body2' sx={{ color: 'var(--s-fg-color)' }}>
+            Or Continue With
+          </Typography>
+          <Divider sx={{ flex: 1 }} />
+        </Stack>
+
+        {/* Sign In Button */}
+        <CButton
+          label='Sign In'
+          cvariant='s'
+          active
+          size='small'
+          fullWidth
+          sx={{ py: 1.5 }}
+          component={Link}
+          href='/sign-in'
         />
       </Stack>
     </Box>
@@ -335,78 +339,44 @@ export default function Main() {
       <Container maxWidth='md' sx={{ py: 8 }}>
         <Grid container spacing={4} justifyContent='center' alignItems='center' height='100%'>
           <Grid item xs={12} sm={8} md={6}>
-            <GlassCard>
-              <Stack spacing={3} sx={{ p: 4 }}>
-                {/* Header */}
-                <Stack alignItems='center' spacing={2}>
-                  <CTypography cvariant='sh'>
-                    Reset Your Password
-                  </CTypography>
-                  <CTypography cvariant='shd' sx={{ textAlign: 'center' }}>
-                    {currentStep === 'email' 
-                      ? 'Enter your email address to receive OTP' 
-                      : currentStep === 'otp'
-                      ? 'Verify your email with OTP'
-                      : 'Create a new password'}
-                  </CTypography>
-                </Stack>
-
-                {/* Step indicator */}
-                <Stack direction='row' justifyContent='center' spacing={2} sx={{ my: 2 }}>
-                  <Box 
-                    sx={{
-                      width: '10px',
-                      height: '10px',
-                      borderRadius: '50%',
-                      backgroundColor: currentStep === 'email' ? 'var(--p-fg-color)' : 'var(--s-bg-color)',
-                      border: '1px solid var(--p-b-color)'
-                    }}
-                  />
-                  <Box 
-                    sx={{
-                      width: '10px',
-                      height: '10px',
-                      borderRadius: '50%',
-                      backgroundColor: currentStep === 'otp' ? 'var(--p-fg-color)' : 'var(--s-bg-color)',
-                      border: '1px solid var(--p-b-color)'
-                    }}
-                  />
-                  <Box 
-                    sx={{
-                      width: '10px',
-                      height: '10px',
-                      borderRadius: '50%',
-                      backgroundColor: currentStep === 'password' ? 'var(--p-fg-color)' : 'var(--s-bg-color)',
-                      border: '1px solid var(--p-b-color)'
-                    }}
-                  />
-                </Stack>
-
-                {/* Form content based on step */}
-                {currentStep === 'email' && renderEmailStep()}
-                {currentStep === 'otp' && renderOTPStep()}
-                {currentStep === 'password' && renderPasswordStep()}
-
-                {/* Back button for OTP and password steps */}
-                {(currentStep === 'otp' || currentStep === 'password') && (
-                  <Stack alignItems='center' spacing={1} sx={{ mt: 2 }}>
-                    <CTypography
-                      component='span'
-                      sx={{
-                        color: 'var(--p-fg-color)',
-                        '&:hover': {
-                          textDecoration: 'underline',
-                          cursor: 'pointer'
-                        },
-                      }}
-                      onClick={handleBack}
-                    >
-                      ← Back to previous step
-                    </CTypography>
-                  </Stack>
-                )}
+            <Stack spacing={3} sx={{ p: 4 }}>
+              {/* Header */}
+              <Stack alignItems='center' spacing={2}>
+                <CTypography cvariant='sh'>
+                  Reset Your Password
+                </CTypography>
+                <CTypography cvariant='shd' sx={{ textAlign: 'center' }}>
+                  {currentStep === 'email' 
+                    ? 'Enter your email address to receive OTP' 
+                    : currentStep === 'otp'
+                    ? 'Verify your email with OTP'
+                    : 'Create a new password'}
+                </CTypography>
               </Stack>
-            </GlassCard>
+              {/* Form content based on step */}
+              {currentStep === 'email' && renderEmailStep()}
+              {currentStep === 'otp' && renderOTPStep()}
+              {currentStep === 'password' && renderPasswordStep()}
+
+              {/* Back button for OTP and password steps */}
+              {(currentStep === 'otp' || currentStep === 'password') && (
+                <Stack alignItems='center' spacing={1} sx={{ mt: 2 }}>
+                  <CTypography
+                    component='span'
+                    sx={{
+                      color: 'var(--p-fg-color)',
+                      '&:hover': {
+                        textDecoration: 'underline',
+                        cursor: 'pointer'
+                      },
+                    }}
+                    onClick={handleBack}
+                  >
+                    ← Back to previous step
+                  </CTypography>
+                </Stack>
+              )}
+            </Stack>
           </Grid>
         </Grid>
       </Container>
