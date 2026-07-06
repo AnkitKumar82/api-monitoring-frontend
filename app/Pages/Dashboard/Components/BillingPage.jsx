@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
-import { Box, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Divider } from '@mui/material'
+import { Box, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Divider, Switch, FormControlLabel } from '@mui/material'
 import CTypography from '../../../Components/CTypography'
 import CButton from '../../../Components/CButton'
 import Panel from './Panel'
+import CToggle from '../../../Components/CToggle'
+import CSwitch from '../../../Components/CSwitch'
 
 // Mock data for payment history
 const mockPayments = [
@@ -42,6 +44,7 @@ const mockPayments = [
 
 export default function BillingPage() {
   const [payments] = useState(mockPayments)
+  const [autoPay, setAutoPay] = useState(true)
   
   // Mock current plan data
   const currentPlan = {
@@ -54,7 +57,7 @@ export default function BillingPage() {
 
   return (
     <Box>
-      <Panel title="Billing" subtitle="Plan usage, invoices, and payment history.">
+      <Panel title='Billing' subtitle='Plan usage, invoices, and payment history.'>
         {/* Current Plan Summary */}
         <Grid container spacing={2.5} sx={{ mb: 3 }}>
           <Grid item xs={12} md={6}>
@@ -67,13 +70,13 @@ export default function BillingPage() {
                 backdropFilter: 'blur(20px)'
               }}
             >
-              <CTypography cvariant="sh" sx={{ mb: 0.75 }}>{currentPlan.name}</CTypography>
-              <CTypography cvariant="caption">{currentPlan.price} • {currentPlan.endpoints} monitored endpoints</CTypography>
+              <CTypography cvariant='sh' sx={{ mb: 0.75 }}>{currentPlan.name}</CTypography>
+              <CTypography cvariant='caption'>{currentPlan.price} • {currentPlan.endpoints} monitored endpoints</CTypography>
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
             <Box 
-              sx={{ 
+              sx={{
                 border: '1px solid var(--p-b-color)',
                 borderRadius: 4, 
                 p: 2.25, 
@@ -81,16 +84,29 @@ export default function BillingPage() {
                 backdropFilter: 'blur(20px)'
               }}
             >
-              <CTypography cvariant="sh" sx={{ mb: 0.75 }}>Next invoice</CTypography>
-              <CTypography cvariant="caption">{currentPlan.nextBilling} • Auto-pay {currentPlan.autoPay ? 'enabled' : 'disabled'}</CTypography>
+              <CTypography cvariant='sh' sx={{ mb: 0.75 }}>Next invoice</CTypography>
+              <CTypography cvariant='caption'>{currentPlan.nextBilling} • Auto-pay {autoPay ? 'enabled' : 'disabled'}</CTypography>
             </Box>
           </Grid>
         </Grid>
 
+        {/* Auto-pay Toggle */}
+        <Box sx={{ mb: 3, ml: '12px' }}>
+          <FormControlLabel
+            control={
+              <CSwitch
+                checked={autoPay}
+                onChange={(e) => setAutoPay(e.target.checked)}
+              />
+            }
+            label={<CTypography sx={{ml: '12px'}} cvariant='c'>{`${autoPay ? 'Disable' : 'Enable'} Auto-pay for future invoices`}</CTypography>}
+          />
+        </Box>
+
         {/* Payment History */}
         <Divider sx={{ mb: 2 }} />
         
-        <CTypography cvariant="h6" sx={{ mb: 2 }}>Payment History</CTypography>
+        <CTypography cvariant='h6' sx={{ mb: 2 }}>Payment History</CTypography>
         
         <TableContainer 
           component={Paper} 
@@ -100,11 +116,11 @@ export default function BillingPage() {
             boxShadow: 'none',
           }}
         >
-          <Table size="small">
+          <Table size='small'>
             <TableHead>
               <TableRow>
                 <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>Date</TableCell>
-                <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>Plan</TableCell>
+                <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>Plan Name</TableCell>
                 <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>Amount</TableCell>
                 <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>Status</TableCell>
                 <TableCell></TableCell>
@@ -113,19 +129,19 @@ export default function BillingPage() {
             <TableBody>
               {payments.map((payment) => (
                 <TableRow key={payment.id} hover>
-                  <TableCell><CTypography cvariant="c">{payment.date}</CTypography></TableCell>
-                  <TableCell><CTypography cvariant="c">{payment.planName}</CTypography></TableCell>
-                  <TableCell><CTypography cvariant="c">{payment.amount}</CTypography></TableCell>
+                  <TableCell><CTypography cvariant='c'>{payment.date}</CTypography></TableCell>
+                  <TableCell><CTypography cvariant='c'>{payment.planName}</CTypography></TableCell>
+                  <TableCell><CTypography cvariant='c'>{payment.amount}</CTypography></TableCell>
                   <TableCell>
-                    <CTypography cvariant="c" sx={{ color: payment.status === 'Completed' ? 'var(--green-color)' : 'var(--p-fg-color)' }}>
+                    <CTypography cvariant='c' sx={{ color: payment.status === 'Completed' ? 'var(--green-color)' : 'var(--p-fg-color)' }}>
                       {payment.status}
                     </CTypography>
                   </TableCell>
                   <TableCell>
                     <CButton 
-                      label="Download Invoice" 
-                      cvariant="t" 
-                      size="small"
+                      label='Download Invoice' 
+                      cvariant='t' 
+                      size='small'
                       onClick={() => alert(`Viewing invoice ${payment.invoiceId}`)}
                     />
                   </TableCell>
