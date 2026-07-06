@@ -170,7 +170,7 @@ export default function Main() {
                     <Stack direction='row' justifyContent='space-between' alignItems='center'>
                       <span></span>
                       <Link
-                        href='/forgot-password'
+                        href='/password-reset'
                         style={{
                           textDecoration: 'none',
                           color: 'inherit',
