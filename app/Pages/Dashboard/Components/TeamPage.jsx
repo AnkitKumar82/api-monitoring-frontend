@@ -135,13 +135,15 @@ export default function TeamPage() {
         <CButton 
           label='Edit'  
           active 
-          cvariant='t'  
+          cvariant='t'
+          size='small'
           onClick={() => handleEditMember(member)}
         />
         <CButton
           label='Delete'  
           active 
-          cvariant='s'  
+          cvariant='s'
+          size='small' 
           onClick={() => handleDelete(member)}
         />
       </Stack>
@@ -160,6 +162,7 @@ export default function TeamPage() {
               label="Add Team Member"
               cvariant="s"
               startIcon={AddIcon}
+              size="normal"
               onClick={handleAddMember}
             />
           </Stack>
@@ -200,6 +203,9 @@ export default function TeamPage() {
         sx={{ p: 2, minWidth: '60vw' }}
       >
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
+          <CTypography cvariant="th" sx={{fontWeight: '600', color: 'var(--p-fg-color)'}}>
+            {editingMember ? `Edit ${editingMember.name}` : 'Add Team Member'}
+          </CTypography>
           <CTextField
             fullWidth
             label="Full Name"
@@ -253,7 +259,12 @@ export default function TeamPage() {
         onClose={cancelDelete}
         aria-labelledby="delete-dialog-title"
         aria-describedby="delete-dialog-description"
-        sx={{p: '12px'}}
+        PaperProps={{
+          sx: {
+            p: '0px 16px 16px 0px',
+            borderRadius: "16px", // Change as needed
+          },
+        }}
       >
         <DialogTitle id="delete-dialog-title">
           {memberToDelete ? `Delete ${memberToDelete.name}` : 'Delete Team Member'}

@@ -15,7 +15,6 @@ export default function CDialog(props) {
           '-webkit-backdrop-filter': 'blur(18px) saturate(180%)',
           border: '1px solid var(--p-b-color)',
           borderRadius: '16px',
-          boxShadow: '0 8px 32px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255,255,255,0.12)',
           p: '24px',
           minWidth: '300px',
           ...props.sx

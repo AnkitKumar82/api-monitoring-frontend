@@ -154,7 +154,6 @@ export default function CButton (props) {
 
   return (
     <Button
-      size='small'
       disableRipple
       sx={{
         textTransform: 'none !important',

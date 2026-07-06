@@ -282,8 +282,8 @@ export default function NotificationsPage() {
   const renderActions = (channel) => {
     return (
       <Stack direction="row" spacing={1}>
-        <CButton label='Edit' active cvariant='t' onClick={() => handleEditChannel(channel)}/>
-        <CButton label='Delete' active cvariant='s'  onClick={() => handleDelete(channel.id)}/>
+        <CButton size="small" label='Edit' active cvariant='t' onClick={() => handleEditChannel(channel)}/>
+        <CButton size="small" label='Delete' active cvariant='s'  onClick={() => handleDelete(channel.id)}/>
       </Stack>
     )
   }
@@ -300,6 +300,7 @@ export default function NotificationsPage() {
               label="Add Notification Channel"
               cvariant="s"
               startIcon={AddIcon}
+              size="normal"
               onClick={() => handleAddChannel('email')}
             />
           </Stack>
@@ -402,6 +403,9 @@ export default function NotificationsPage() {
         maxWidth="sm"
         sx={{ p: 2, minWidth: '60vw',  }}
       >
+        <CTypography cvariant="th" sx={{ fontWeight: '600', color: 'var(--p-fg-color)' }}>
+          {editingChannel ? `Edit ${editingChannel.name}` : `Add ${modalType.charAt(0).toUpperCase() + modalType.slice(1)} Notification Channel`}
+        </CTypography>
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2, }}>
           <CTextField
             fullWidth
@@ -488,7 +492,12 @@ export default function NotificationsPage() {
         onClose={cancelDelete}
         aria-labelledby="delete-dialog-title"
         aria-describedby="delete-dialog-description"
-        sx={{ p: '12px' }}
+        PaperProps={{
+          sx: {
+            p: '0px 16px 16px 0px',
+            borderRadius: "16px", // Change as needed
+          },
+        }}
       >
         <DialogTitle id="delete-dialog-title">
           {channelToDelete ? `Delete ${channelToDelete.name}` : 'Delete Notification Channel'}
