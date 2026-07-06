@@ -69,11 +69,16 @@ const responseTypes = [
 ]
 
 export default function CreateEndpointsPage() {
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     name: '',
     urls: '',
     method: '',
     responseType: '',
+    statusCode: '',
+    jsonMatch: '',
+    xmlMatch: '',
+    stringMatch: '',
+    headers: '',
     notificationGroups: [],
     interval: ''
   })
@@ -97,7 +102,7 @@ export default function CreateEndpointsPage() {
     setFormData(prev => ({ ...prev, interval: value }))
   }
 
-  // Validate form
+// Validate form
   const validateForm = () => {
     const newErrors = {}
 
@@ -125,6 +130,20 @@ export default function CreateEndpointsPage() {
 
     if (!formData.responseType) {
       newErrors.responseType = 'Response type is required'
+    } else {
+      // Validate response type specific fields
+      if (formData.responseType === 'status_code' && !formData.statusCode.trim()) {
+        newErrors.statusCode = 'HTTP status code is required'
+      }
+      if (formData.responseType === 'json_match' && !formData.jsonMatch.trim()) {
+        newErrors.jsonMatch = 'Expected JSON response is required'
+      }
+      if (formData.responseType === 'xml_match' && !formData.xmlMatch.trim()) {
+        newErrors.xmlMatch = 'Expected XML response is required'
+      }
+      if (formData.responseType === 'string_match' && !formData.stringMatch.trim()) {
+        newErrors.stringMatch = 'String to match is required'
+      }
     }
 
     if (formData.notificationGroups.length === 0) {
@@ -206,9 +225,23 @@ export default function CreateEndpointsPage() {
                 value={formData.urls}
                 onChange={handleInputChange}
                 error={!!errors.urls}
-                helperText={errors.urls || 'Enter one URL per line (e.g. https://api.example.com/users)'}
+                helperText={errors.urls || 'Enter one URL per line or comma separated (e.g. https://api.example.com/users)'}
                 multiline
                 rows={4}
+              />
+            </Grid>
+            {/* HTTP Headers */}
+            <Grid item xs={12}>
+              <CTextField
+                fullWidth
+                label="HTTP Request Headers"
+                name="headers"
+                value={formData.headers}
+                onChange={handleInputChange}
+                error={!!errors.headers}
+                helperText={errors.headers || 'Enter headers as key: value pairs (e.g. x-api-key: xxxxxx-xxxxx-xxxxxx)'}
+                multiline
+                rows={2}
               />
             </Grid>
 
@@ -229,6 +262,67 @@ export default function CreateEndpointsPage() {
                 ))}
               </CSelect>
             </Grid>
+
+            {/* Response Type Specific Fields */}
+            {formData.responseType === 'status_code' && (
+              <Grid item xs={12}>
+                <CTextField
+                  fullWidth
+                  label="HTTP Status Code"
+                  name="statusCode"
+                  value={formData.statusCode}
+                  onChange={handleInputChange}
+                  error={!!errors.statusCode}
+                  helperText={errors.statusCode || 'Enter HTTP status code(s) (e.g. 200, 404)'}
+                />
+              </Grid>
+            )}
+
+            {formData.responseType === 'json_match' && (
+              <Grid item xs={12}>
+                <CTextField
+                  fullWidth
+                  label="Expected JSON Response"
+                  name="jsonMatch"
+                  value={formData.jsonMatch}
+                  onChange={handleInputChange}
+                  error={!!errors.jsonMatch}
+                  helperText={errors.jsonMatch || 'Enter exact JSON response for matching'}
+                  multiline
+                  rows={4}
+                />
+              </Grid>
+            )}
+
+            {formData.responseType === 'xml_match' && (
+              <Grid item xs={12}>
+                <CTextField
+                  fullWidth
+                  label="Expected XML Response"
+                  name="xmlMatch"
+                  value={formData.xmlMatch}
+                  onChange={handleInputChange}
+                  error={!!errors.xmlMatch}
+                  helperText={errors.xmlMatch || 'Enter exact XML response for matching'}
+                  multiline
+                  rows={4}
+                />
+              </Grid>
+            )}
+
+            {formData.responseType === 'string_match' && (
+              <Grid item xs={12}>
+                <CTextField
+                  fullWidth
+                  label="String to Match"
+                  name="stringMatch"
+                  value={formData.stringMatch}
+                  onChange={handleInputChange}
+                  error={!!errors.stringMatch}
+                  helperText={errors.stringMatch || 'Enter string to match in response'}
+                />
+              </Grid>
+            )}
 
             {/* Notification Groups */}
             <Grid item xs={12} md={6}>
