@@ -16,6 +16,7 @@ import {
   useMediaQuery,
   useTheme
 } from '@mui/material'
+
 import {
   CloudDoneRounded,
   CreditCardRounded,
@@ -41,6 +42,7 @@ import BillingPage from './Components/BillingPage'
 import AnalyticsPage from './Components/AnalyticsPage'
 import AppIcon from '../../Commons/AppIcon'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 const sidebarItems = [
   { label: 'Dashboard', icon: DashboardRounded },
@@ -85,8 +87,8 @@ const Sidebar = ({ open, onClose, activeSection, onSelect }) => {
             return (
               <ListItem key={item.label} disablePadding sx={{ mb: 0.5 }}>
                 <ListItemButton
-                  selected={activeSection === item.label}
-                  onClick={() => { onSelect(item.label); onClose() }}
+                  selected={activeSection === item.label.toLowerCase()}
+                  onClick={() => { onSelect(item.label.toLowerCase()); onClose() }}
                   disableRipple
                   sx={{
                     borderRadius: '8px',
@@ -99,8 +101,8 @@ const Sidebar = ({ open, onClose, activeSection, onSelect }) => {
                     primary={item.label}
                     primaryTypographyProps={{
                       fontSize: '0.8rem',
-                      fontWeight: activeSection === item.label ? 700 : 500,
-                      color: activeSection === item.label ? 'var(--p-fg-color)' : 'var(--s-fg-color)'
+                      fontWeight: activeSection === item.label.toLowerCase() ? 700 : 500,
+                      color: activeSection === item.label.toLowerCase() ? 'var(--p-fg-color)' : 'var(--s-fg-color)'
                     }}
                   />
                 </ListItemButton>
@@ -138,42 +140,44 @@ const Sidebar = ({ open, onClose, activeSection, onSelect }) => {
   }
 
   return (
-  <Box
-    sx={{
-      width: 280,
-      flexShrink: 0,
-      display: { xs: 'none', lg: 'block' },
-      position: 'sticky',
-      top: 0,
-      height: '100vh',
-      alignSelf: 'flex-start',
-    }}
-  >
-    {content}
-  </Box>
-)
-  // return <Box sx={{ width: 280, flexShrink: 0, display: { xs: 'none', lg: 'block' } }}>{content}</Box>
+    <Box
+      sx={{
+        width: 280,
+        flexShrink: 0,
+        display: { xs: 'none', lg: 'block' },
+        position: 'sticky',
+        top: 0,
+        height: '100vh',
+        alignSelf: 'flex-start',
+      }}
+    >
+      {content}
+    </Box>
+  )
 }
 
 export default function Main() {
+  const router = useRouter()
+  const { view, id } = router.query 
+
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [activeSection, setActiveSection] = useState('Dashboard')
+  const [activeSection, setActiveSection] = useState(view || 'dashboard')
 
   const renderSection = () => {
     switch (activeSection) {
-      case 'Incidents':
+      case 'incidents':
         return <IncidentsPage />
-      case 'Notifications':
+      case 'notifications':
         return <NotificationsPage />
-      case 'Team':
+      case 'team':
         return <TeamPage />
-      case 'Settings':
+      case 'settings':
         return <SettingsPage />
-      case 'Status Pages':
+      case 'status Pages':
         return <StatusPagesPage />
-      case 'Billing':
+      case 'billing':
         return <BillingPage />
-      case 'Analytics':
+      case 'analytics':
         return <AnalyticsPage />
       default:
         return <DashboardOverview />

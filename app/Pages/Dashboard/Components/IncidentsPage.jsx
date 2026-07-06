@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useRouter } from 'next/router'
 import { Box, Grid, Paper, Stack, MenuItem, TablePagination, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 import { AddRounded, SearchRounded } from '@mui/icons-material'
 import CButton from '../../../Components/CButton'
@@ -8,7 +9,6 @@ import CTextField from '../../../Components/CTextField'
 import CSelect from '../../../Components/CSelect'
 import Panel from './Panel'
 import REGIONS from '../Constants/REGIONS'
-
 
 const incidents = [
   { name: 'Payments API', resolveTime: '5 min ago', startTime: '2 min ago', uptime:'93.132%', reason:'Invalid status code: 404', method: 'GET', url: 'https://api.example.com/payments', interval: '1 min', regions: ["US","EU"], status: 'RESOLVED', latency: '121ms', lastCheck: '2 min ago' },
@@ -61,7 +61,10 @@ const StatusBadge = ({ status }) => {
 
 export default function IncidentsPage() {
   const [formData, setFormData] = useState({ endpoint: '', methods: [], regions: [] })
-  
+  const router = useRouter()
+
+  const { view, action, id } = router.query
+
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({
@@ -133,7 +136,6 @@ export default function IncidentsPage() {
               <TableRow>
                 <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>Status</TableCell>
                 <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>Name</TableCell>
-                <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>URL</TableCell>
                 <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>Started</TableCell>
                 <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>Resolved</TableCell>
                 <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>Reason</TableCell>
@@ -145,7 +147,6 @@ export default function IncidentsPage() {
                 <TableRow key={incident.name}>
                   <TableCell><StatusBadge status={incident.status}/></TableCell>
                   <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.name}</CTypography></TableCell>
-                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.url}</CTypography></TableCell>
                   <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.startTime}</CTypography></TableCell>
                   <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.resolveTime}</CTypography></TableCell>
                   <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.reason}</CTypography></TableCell>
