@@ -309,21 +309,21 @@ export default function NotificationsPage() {
         {/* Summary Cards */}
         <Grid container spacing={3} sx={{ mb: 3 }}>
           <Grid item xs={4} sm={4} md={4}>
-            <Box sx={{ border: '1px solid var(--glass-border)', borderRadius: 2, p: 3, background: 'rgba(255,255,255,0.08)' }}>
+            <Box sx={{ border: '1px solid var(--p-b-color)', borderRadius: '12px', p: 3 }}>
               <CTypography cvariant="h6" sx={{ mb: 1 }}>Total Channels</CTypography>
-              <CTypography cvariant="h4" sx={{ fontWeight: 'bold' }}>{summaryData.totalChannels}</CTypography>
+              <CTypography cvariant="h4" sx={{ color: 'var(--p-fg-color)', fontWeight: 'bold' }}>{summaryData.totalChannels}</CTypography>
             </Box>
           </Grid>
           <Grid item xs={4} sm={4} md={4}>
-            <Box sx={{ border: '1px solid var(--glass-border)', borderRadius: 2, p: 3, background: 'rgba(255,255,255,0.08)' }}>
+            <Box sx={{ border: '1px solid var(--p-b-color)', borderRadius: '12px', p: 3 }}>
               <CTypography cvariant="h6" sx={{ mb: 1 }}>Email Channels</CTypography>
-              <CTypography cvariant="h4" sx={{ fontWeight: 'bold' }}>{summaryData.emailChannels}</CTypography>
+              <CTypography cvariant="h4" sx={{ color: 'var(--p-fg-color)', fontWeight: 'bold' }}>{summaryData.emailChannels}</CTypography>
             </Box>
           </Grid>
           <Grid item xs={4} sm={4} md={4}>
-            <Box sx={{ border: '1px solid var(--glass-border)', borderRadius: 2, p: 3, background: 'rgba(255,255,255,0.08)' }}>
+            <Box sx={{ border: '1px solid var(--p-b-color)', borderRadius: '12px', p: 3 }}>
               <CTypography cvariant="h6" sx={{ mb: 1 }}>Slack Channels</CTypography>
-              <CTypography cvariant="h4" sx={{ fontWeight: 'bold' }}>{summaryData.slackChannels}</CTypography>
+              <CTypography cvariant="h4" sx={{ color: 'var(--p-fg-color)', fontWeight: 'bold' }}>{summaryData.slackChannels}</CTypography>
             </Box>
           </Grid>
         </Grid>
