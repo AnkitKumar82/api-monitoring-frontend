@@ -68,6 +68,7 @@ export default function Features() {
     <Box display="flex" flexDirection="column">
       {/* ===================== FEATURES ===================== */}
       <Container
+        id="features"
         maxWidth="lg"
         sx={{
           py: 12

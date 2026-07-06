@@ -100,6 +100,26 @@ export default function NavBar() {
             </Link>
 
             <Link
+              href="#get-started"
+              style={{
+                textDecoration: 'none',
+                color: 'inherit',
+              }}
+            >
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'var(--s-fg-color)',
+                  '&:hover': {
+                    color: 'var(--p-fg-color)',
+                  },
+                }}
+              >
+                Get Started
+              </Typography>
+            </Link>
+
+            <Link
               href="#pricing"
               style={{
                 textDecoration: 'none',

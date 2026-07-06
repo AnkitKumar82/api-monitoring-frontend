@@ -67,6 +67,7 @@ export default function HowItWorks() {
     <Box display="flex" flexDirection="column">
       {/* ===================== HOW IT WORKS ===================== */}
       <Container
+        id="get-started"
         maxWidth="lg"
         sx={{
           py: 12,

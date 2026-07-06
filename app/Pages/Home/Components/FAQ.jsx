@@ -65,6 +65,7 @@ export default function FAQ() {
   return (
     <Box display="flex" flexDirection="column">
       <Container
+        id="faq"
         maxWidth="lg"
         sx={{
           pb: 10,

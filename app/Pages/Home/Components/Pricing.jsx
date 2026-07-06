@@ -112,6 +112,7 @@ export default function Pricing() {
     <Box display="flex" flexDirection="column">
       {/* ===================== PRICING ===================== */}
       <Container
+        id="pricing"
         maxWidth="lg"
         sx={{
           py: 12,

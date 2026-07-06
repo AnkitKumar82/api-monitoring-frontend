@@ -74,7 +74,7 @@ export default function Footer() {
           border: "1px solid rgba(59,130,246,.15)",
         }}
       >
-        <Container maxWidth="lg">
+        <Container maxWidth="lg" id="footer">
 
           <Grid
             container
