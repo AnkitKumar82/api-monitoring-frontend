@@ -10,6 +10,7 @@ import { AddRounded as AddIcon, DeleteRounded as DeleteIcon } from '@mui/icons-m
 
 const initialMembers = [
   { name: 'Maya Chen', email: 'maya@company.dev', role: 'Owner' },
+  { name: 'Maya Chen', email: 'maya@company.dev', role: 'Editor' },
   { name: 'Liam Ortiz', email: 'liam@company.dev', role: 'Admin' },
   { name: 'Nina Patel', email: 'nina@company.dev', role: 'Viewer' }
 ]
@@ -137,10 +138,10 @@ export default function TeamPage() {
           cvariant='t'  
           onClick={() => handleEditMember(member)}
         />
-        <CButton 
+        <CButton
           label='Delete'  
           active 
-          cvariant='t'  
+          cvariant='s'  
           onClick={() => handleDelete(member)}
         />
       </Stack>
@@ -177,9 +178,9 @@ export default function TeamPage() {
             <TableBody>
               {members.map((member) => (
                 <TableRow key={member.email}>
-                  <TableCell sx={{ color: 'var(--p-fg-color)' }}>{member.name}</TableCell>
-                  <TableCell sx={{ color: 'var(--s-fg-color)' }}>{member.email}</TableCell>
-                  <TableCell sx={{ color: 'var(--p-fg-color)' }}>{member.role}</TableCell>
+                  <TableCell><CTypography cvariant="c" sx={{color: 'var(--p-fg-color)'}}>{member.name}</CTypography></TableCell>
+                  <TableCell><CTypography cvariant="c" sx={{color: 'var(--p-fg-color)'}}>{member.email}</CTypography></TableCell>
+                  <TableCell><CTypography cvariant="c" sx={{color: 'var(--p-fg-color)'}}>{member.role}</CTypography></TableCell>
                   <TableCell>
                     {renderActions(member)}
                   </TableCell>

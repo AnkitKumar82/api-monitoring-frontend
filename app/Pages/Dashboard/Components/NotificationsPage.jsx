@@ -282,8 +282,8 @@ export default function NotificationsPage() {
   const renderActions = (channel) => {
     return (
       <Stack direction="row" spacing={1}>
-        <CButton label='Edit'  active cvariant='t' onClick={() => handleEditChannel(channel)}/>
-        <CButton label='Delete'  active cvariant='t'  onClick={() => handleDelete(channel.id)}/>
+        <CButton label='Edit' active cvariant='t' onClick={() => handleEditChannel(channel)}/>
+        <CButton label='Delete' active cvariant='s'  onClick={() => handleDelete(channel.id)}/>
       </Stack>
     )
   }
@@ -365,7 +365,7 @@ export default function NotificationsPage() {
               ) : (
                 channels.map((channel) => (
                   <TableRow key={channel.id}>
-                    <TableCell><CTypography cvariant="c">{channel.name}</CTypography></TableCell>
+                    <TableCell><CTypography cvariant="c" sx={{color: 'var(--p-fg-color)'}}>{channel.name}</CTypography></TableCell>
                     <TableCell>{renderDestination(channel)}</TableCell>
                     <TableCell><CTypography cvariant="c">{channel.type}</CTypography></TableCell>
                     <TableCell>
