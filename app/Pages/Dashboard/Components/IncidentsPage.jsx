@@ -60,7 +60,7 @@ const StatusBadge = ({ status }) => {
 }
 
 export default function IncidentsPage() {
-  const [formData, setFormData] = useState({ endpoint: '', methods: [], regions: [] })
+  const [formData, setFormData] = useState({ endpoint: '', methods: [], regions: [], status: [] })
   const router = useRouter()
 
   const { view, action, id } = router.query
@@ -81,16 +81,32 @@ export default function IncidentsPage() {
     <Box>
       <Panel title='Incidents' subtitle='Track active and resolved issues across your APIs with clear impact details.'>
         <Grid container spacing={2} sx={{ mb: '8px' }}>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
             <CTextField
               cvariant='p'
               name='endpoints'
               label='Endpoint'
-              placeholder={`Payments API or api.example.com/payments`}
+              placeholder={`Payments API,api.example.com/auth`}
               fullWidth
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={2}>
+            <CSelect
+              multiple
+              cvariant='s'
+              name='status'
+              label='Status'
+              value={formData.status}
+              onChange={handleChange}
+              fullWidth
+            >
+              <MenuItem value={'HEALTHY'}>Healthy</MenuItem>
+              <MenuItem value={'DEGRADED'}>Degraded</MenuItem>
+              <MenuItem value={'DOWN'}>Down</MenuItem>
+              <MenuItem value={'PAUSED'}>Paused</MenuItem>
+            </CSelect>
+          </Grid>
+          <Grid item xs={12} md={2}>
             <CTextField
               cvariant='p'
               name='email'
@@ -99,7 +115,7 @@ export default function IncidentsPage() {
               fullWidth
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={2}>
             <CSelect
               multiple
               cvariant='s'

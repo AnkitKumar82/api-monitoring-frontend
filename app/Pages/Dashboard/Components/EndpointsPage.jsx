@@ -62,7 +62,7 @@ const StatusBadge = ({ status }) => {
 }
 
 export default function EndpointsPage() {
-  const [formData, setFormData] = useState({ endpoint: '', methods: [], regions: [] })
+  const [formData, setFormData] = useState({ endpoint: '', methods: [], regions: [], status: [] })
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -73,23 +73,41 @@ export default function EndpointsPage() {
   }
 
   const handleResetFilter = (e) => {
-    setFormData({ endpoint: '', methods: [], regions: [] })
+    setFormData({ endpoint: '', methods: [], regions: [], status: [] })
   }
 
   return (
     <Box>
       <Panel title='Endpoints' subtitle='Manage your monitored services and add new checks.'>
         <Grid container spacing={2} sx={{ mb: '8px' }}>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
             <CTextField
               cvariant='p'
-              name='email'
+              name='endpoint'
               label='Endpoint'
-              placeholder={`Payments API or api.example.com/payments`}
+              value={formData.endpoint}
+              placeholder={`Payments API,api.example.com/auth`}
+              onChange={handleChange}
               fullWidth
             />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={2}>
+            <CSelect
+              multiple
+              cvariant='s'
+              name='status'
+              label='Status'
+              value={formData.status}
+              onChange={handleChange}
+              fullWidth
+            >
+              <MenuItem value={'HEALTHY'}>Healthy</MenuItem>
+              <MenuItem value={'DEGRADED'}>Degraded</MenuItem>
+              <MenuItem value={'DOWN'}>Down</MenuItem>
+              <MenuItem value={'PAUSED'}>Paused</MenuItem>
+            </CSelect>
+          </Grid>
+          <Grid item xs={12} md={2}>
             <CSelect
               multiple
               cvariant='s'
@@ -103,7 +121,7 @@ export default function EndpointsPage() {
               <MenuItem value={'GET'}>GET</MenuItem>
             </CSelect>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={2}>
             <CSelect
               multiple
               cvariant='s'

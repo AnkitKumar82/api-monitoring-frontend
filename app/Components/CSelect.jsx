@@ -78,7 +78,7 @@ export default function CSelect (props) {
               boxShadow: 'var(--glass-shadow)',
               color: 'var(--p-fg-color)',
               maxHeight: '320px',
-              width: '320px',
+              maxWidth: '320px',
               overflow: 'auto',
               '-ms-overflow-style': 'none',
               'scrollbar-width': 'none',

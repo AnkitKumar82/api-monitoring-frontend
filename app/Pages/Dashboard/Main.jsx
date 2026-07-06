@@ -39,7 +39,6 @@ import TeamPage from './Components/TeamPage'
 import SettingsPage from './Components/SettingsPage'
 import StatusPagesPage from './Components/StatusPagesPage'
 import BillingPage from './Components/BillingPage'
-import AnalyticsPage from './Components/AnalyticsPage'
 import AppIcon from '../../Commons/AppIcon'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -51,8 +50,7 @@ const sidebarItems = [
   { label: 'Team', icon: GroupRounded },
   { label: 'Settings', icon: SettingsRounded },
   { label: 'Status Pages', icon: PublicRounded },
-  { label: 'Billing', icon: CreditCardRounded },
-  { label: 'Analytics', icon: InsightsRounded }
+  { label: 'Billing', icon: CreditCardRounded }
 ]
 
 const Sidebar = ({ open, onClose, activeSection, onSelect }) => {
@@ -177,8 +175,6 @@ export default function Main() {
         return <StatusPagesPage />
       case 'billing':
         return <BillingPage />
-      case 'analytics':
-        return <AnalyticsPage />
       default:
         return <DashboardOverview />
     }

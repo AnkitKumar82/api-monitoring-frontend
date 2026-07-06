@@ -1,0 +1,70 @@
+body {
+  /* Backgrounds */
+  --p-bg-color: #162033;
+  --p-bg-st-color: #16203333;
+
+  --s-bg-color: #1e293b;      /* Glass card */
+  --t-bg-color: #2d3748;      /* Secondary glass */
+
+  /* Foreground */
+  --p-fg-color: #f8fafc;
+  --p-fg-st-color: #f8fafc11;
+  --s-fg-color: #cbd5e1;
+  --t-fg-color: #94a3b8;
+
+  /* Borders */
+  --p-b-color: #334155;
+  --s-b-color: #475569;
+  --t-b-color: #64748b;
+
+  /* Accent colors */
+  --red-color: #f87171;
+  --red-sst-color: #f87171bb;
+  --red-st-color: #f8717122;
+  --orange-color: #fdba74;
+  --orange-sst-color: #fdba74bb;
+  --orange-st-color: #fdba7422;
+
+  --blue-color: #60a5fa;
+  --blue-sst-color: #60a5fab1;
+  --blue-st-color: #60a5fa22;
+
+  --green-color: #4ade80;
+  --green-sst-color: #4ade80bb;
+  --green-st-color: #4ade8022;
+
+  /* Additional accent colors */
+  --success-color: #4ade80;
+  --success-sst-color: #4ade8066;
+  --success-st-color: #4ade8022;
+
+  --warning-color: #fdba74;
+  --warning-sst-color: #fdba7466;
+  --warning-st-color: #fdba7422;
+
+  --error-color: #f87171;
+  --error-sst-color: #f8717166;
+  --error-st-color: #f8717122;
+
+  /* Enhanced glass effects */
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+@keyframes livePulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(96, 165, 250, .45);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(74, 222, 128, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
+  }
+}
