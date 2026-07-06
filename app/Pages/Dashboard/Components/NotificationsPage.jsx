@@ -227,10 +227,10 @@ export default function NotificationsPage() {
     return (
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
         {recipients.slice(0, 3).map((recipient, index) => (
-          <CChip key={index} label={recipient} size="small" sx={{ backgroundColor: 'rgba(79,156,187,0.08)' }} />
+          <CChip key={index} cvariant='s' label={recipient} clickable size="small" labelStyle={{fontSize: '0.8rem' }} sx={{ fontSize: '0.8rem', bgcolor: 'var(--t-bg-color)', color: 'var(--p-fg-color)', }} />
         ))}
         {recipients.length > 3 && (
-          <CTypography cvariant="c" sx={{ color: 'var(--t-fg-color)' }}>+{recipients.length - 3} more</CTypography>
+          <CTypography cvariant="c" sx={{ color: 'var(--p-fg-color)' }}>+{recipients.length - 3} more</CTypography>
         )}
       </Box>
     )
@@ -243,7 +243,7 @@ export default function NotificationsPage() {
     } else {
       return (
         <Tooltip title={channel.destination}>
-          <CTypography cvariant="c" noWrap sx={{ maxWidth: 200 }}>
+          <CTypography cvariant="c" noWrap sx={{ color: 'var(--p-fg-color)', maxWidth: 200 }}>
             {channel.destination}
           </CTypography>
         </Tooltip>

@@ -27,7 +27,6 @@ export default function CChip(props) {
         border: '1px solid var(--p-b-color)',
         backdropFilter: 'blur(18px) saturate(180%)',
         '-webkit-backdrop-filter': 'blur(18px) saturate(180%)',
-        boxShadow: '0 8px 32px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255,255,255,0.12)',
         color: 'var(--p-fg-color)'
       }
       break
@@ -38,7 +37,6 @@ export default function CChip(props) {
         border: '1px solid var(--green-st-color)',
         backdropFilter: 'blur(18px) saturate(180%)',
         '-webkit-backdrop-filter': 'blur(18px) saturate(180%)',
-        boxShadow: '0 8px 32px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255,255,255,0.12)',
         color: 'var(--green-color)'
       }
       break
@@ -49,7 +47,6 @@ export default function CChip(props) {
         border: '1px solid var(--orange-st-color)',
         backdropFilter: 'blur(18px) saturate(180%)',
         '-webkit-backdrop-filter': 'blur(18px) saturate(180%)',
-        boxShadow: '0 8px 32px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255,255,255,0.12)',
         color: 'var(--orange-color)'
       }
       break
@@ -60,7 +57,6 @@ export default function CChip(props) {
         border: '1px solid var(--red-st-color)',
         backdropFilter: 'blur(18px) saturate(180%)',
         '-webkit-backdrop-filter': 'blur(18px) saturate(180%)',
-        boxShadow: '0 8px 32px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255,255,255,0.12)',
         color: 'var(--red-color)'
       }
       break
@@ -71,7 +67,6 @@ export default function CChip(props) {
         border: '1px solid var(--blue-st-color)',
         backdropFilter: 'blur(18px) saturate(180%)',
         '-webkit-backdrop-filter': 'blur(18px) saturate(180%)',
-        boxShadow: '0 8px 32px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255,255,255,0.12)',
         color: 'var(--blue-color)'
       }
       break
@@ -81,7 +76,6 @@ export default function CChip(props) {
         border: '1px solid var(--p-b-color)',
         backdropFilter: 'blur(18px) saturate(180%)',
         '-webkit-backdrop-filter': 'blur(18px) saturate(180%)',
-        boxShadow: '0 8px 32px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255,255,255,0.12)',
         color: 'var(--p-fg-color)'
       }
   }
