@@ -82,10 +82,10 @@ const Sidebar = ({ open, onClose, activeSection, onSelect }) => {
                   color: 'inherit',
                 }}
               >
-                <ListItem key={item.label} disablePadding sx={{ mb: 0.5 }}>
+                <ListItem key={item.id} disablePadding sx={{ mb: 0.5 }}>
                   <ListItemButton
-                    selected={activeSection === item.label.toLowerCase()}
-                    onClick={() => { onSelect(item.label.toLowerCase()); onClose() }}
+                    selected={activeSection === item.id}
+                    onClick={() => { onSelect(item.id); onClose() }}
                     disableRipple
                     sx={{
                       borderRadius: '8px',
@@ -98,8 +98,8 @@ const Sidebar = ({ open, onClose, activeSection, onSelect }) => {
                       primary={item.label}
                       primaryTypographyProps={{
                         fontSize: '0.8rem',
-                        fontWeight: activeSection === item.label.toLowerCase() ? 700 : 500,
-                        color: activeSection === item.label.toLowerCase() ? 'var(--p-fg-color)' : 'var(--s-fg-color)'
+                        fontWeight: activeSection === item.id ? 700 : 500,
+                        color: activeSection === item.id ? 'var(--p-fg-color)' : 'var(--s-fg-color)'
                       }}
                     />
                   </ListItemButton>
@@ -155,12 +155,12 @@ const Sidebar = ({ open, onClose, activeSection, onSelect }) => {
 }
 
 export default function Main({ view }) {
-  const router = useRouter()
-
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const [activeSection, setActiveSection] = useState('dashboard')
-
   const viewConstant = VIEWS.find((item) => item.id === view.id) || {}
+  
+  const router = useRouter()
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState(viewConstant.id)
+
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', width: '100%' }}>

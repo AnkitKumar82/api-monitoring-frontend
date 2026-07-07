@@ -10,7 +10,6 @@ import Panel from './Panel'
 import REGIONS from '../Constants/REGIONS'
 import Link from 'next/link'
 
-
 const endpoints = [
   { name: 'Payments API', uptime:'93.132%', method: 'GET', url: 'https://api.example.com/payments', interval: '1 min', regions: ["US","EU"], status: 'HEALTHY', latency: '121ms', lastCheck: '2 min ago' },
   { name: 'Auth Service', uptime:'78.112%', method: 'POST', url: 'https://api.example.com/auth', interval: '30 sec', regions: ["US","SG"], status: 'DOWN', latency: '245ms', lastCheck: '5 min ago' },
@@ -171,23 +170,105 @@ export default function EndpointsPage() {
             <TableBody>
               {endpoints.map((endpoint) => (
                 <TableRow key={endpoint.name} sx={{':hover': { cursor: 'pointer', bgcolor: 'var(--t-bg-color)' }}}>
-                  <Link
-                    href="/dashboard/endpoint"
-                    style={{
-                      textDecoration: 'none',
-                      color: 'inherit',
-                    }}
-                  >
-                  <TableCell><StatusBadge status={endpoint.status}/></TableCell>
+                  <TableCell>
+                    <Link
+                      href="/dashboard/endpoint"
+                      style={{
+                        textDecoration: 'none',
+                        color: 'inherit',
+                      }}
+                    >
+                      <StatusBadge status={endpoint.status}/>
                     </Link>
-                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.uptime}</CTypography></TableCell>
-                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.name}</CTypography></TableCell>
-                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.method}</CTypography></TableCell>
-                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.url}</CTypography></TableCell>
-                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.interval}</CTypography></TableCell>
-                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.regions.map((region) => `${REGIONS[region].flag} `)} </CTypography></TableCell>
-                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.latency}</CTypography></TableCell>
-                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.lastCheck}</CTypography></TableCell>
+                  </TableCell>
+                  <TableCell>
+                    <Link
+                      href="/dashboard/endpoint"
+                      style={{
+                        textDecoration: 'none',
+                        color: 'inherit',
+                      }}
+                    >
+                      <CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.uptime}</CTypography>
+                    </Link>
+                  </TableCell>
+                  <TableCell>
+                    <Link
+                      href="/dashboard/endpoint"
+                      style={{
+                        textDecoration: 'none',
+                        color: 'inherit',
+                      }}
+                    >
+                    <CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.name}</CTypography>
+                    </Link>
+                  </TableCell>
+                  <TableCell>
+                    <Link
+                      href="/dashboard/endpoint"
+                      style={{
+                        textDecoration: 'none',
+                        color: 'inherit',
+                      }}
+                    >
+                    <CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.method}</CTypography>
+                    </Link>
+                  </TableCell>
+                  <TableCell>
+                    <Link
+                      href="/dashboard/endpoint"
+                      style={{
+                        textDecoration: 'none',
+                        color: 'inherit',
+                      }}
+                    >
+                    <CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.url}</CTypography>
+                    </Link>
+                  </TableCell>
+                  <TableCell>
+                    <Link
+                      href="/dashboard/endpoint"
+                      style={{
+                        textDecoration: 'none',
+                        color: 'inherit',
+                      }}
+                    >
+                    <CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.interval}</CTypography>
+                    </Link>
+                  </TableCell>
+                  <TableCell>
+                    <Link
+                      href="/dashboard/endpoint"
+                      style={{
+                        textDecoration: 'none',
+                        color: 'inherit',
+                      }}
+                    >
+                    <CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.regions.map((region) => `${REGIONS[region].flag} `)} </CTypography>
+                    </Link>
+                  </TableCell>
+                  <TableCell>
+                    <Link
+                      href="/dashboard/endpoint"
+                      style={{
+                        textDecoration: 'none',
+                        color: 'inherit',
+                      }}
+                    >
+                    <CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.latency}</CTypography>
+                    </Link>
+                  </TableCell>
+                  <TableCell>
+                    <Link
+                      href="/dashboard/endpoint"
+                      style={{
+                        textDecoration: 'none',
+                        color: 'inherit',
+                      }}
+                    >
+                    <CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.lastCheck}</CTypography>
+                    </Link>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
