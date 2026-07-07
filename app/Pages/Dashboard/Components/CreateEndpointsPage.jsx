@@ -5,6 +5,7 @@ import CButton from '../../../Components/CButton'
 import CSelect from '../../../Components/CSelect'
 import CTextField from '../../../Components/CTextField'
 import Panel from './Panel'
+import Link from 'next/link'
 
 // Mock data for notification groups (similar to notifications page)
 const mockNotificationGroups = [
@@ -69,7 +70,7 @@ const responseTypes = [
 ]
 
 export default function CreateEndpointsPage() {
-const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({
     name: '',
     urls: '',
     method: '',
@@ -178,10 +179,19 @@ const [formData, setFormData] = useState({
   }
 
   return (
-    <Box>
+    <Box>      
       <Panel 
         title="Create Endpoint" 
-        subtitle="Add a new API endpoint to monitor for uptime and response validation." 
+        subtitle="Add a new API endpoint to monitor for uptime and response validation."
+        actions={<Link
+            href="/dashboard/overview"
+            style={{
+              textDecoration: 'none',
+              color: 'inherit',
+            }}
+          >
+            <CButton label='Back to Overview' cvariant='s' size='normal'/>
+          </Link>}
       >
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
           <Grid container spacing={3}>
