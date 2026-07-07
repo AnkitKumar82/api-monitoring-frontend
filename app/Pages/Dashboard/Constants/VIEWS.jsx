@@ -7,6 +7,7 @@ import SettingsPage from '../Components/SettingsPage'
 import StatusPagesPage from '../Components/StatusPagesPage'
 import BillingPage from '../Components/BillingPage'
 import CreateEndpointsPage from '../Components/CreateEndpointsPage'
+import EndpointAnalysis from '../Components/EndpointAnalysis'
 
 
 const VIEWS = [
@@ -22,6 +23,12 @@ const VIEWS = [
     slug: 'create-endpoint', 
     label: 'Overview', 
     pageComponent: <CreateEndpointsPage />
+  },
+  {
+    id: 'ENDPOINT', 
+    slug: 'endpoint', 
+    label: 'Overview', 
+    pageComponent: <EndpointAnalysis />
   },
   {
     id: 'INCIDENTS', 

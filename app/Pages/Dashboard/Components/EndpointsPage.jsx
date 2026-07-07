@@ -8,6 +8,7 @@ import CTextField from '../../../Components/CTextField'
 import CSelect from '../../../Components/CSelect'
 import Panel from './Panel'
 import REGIONS from '../Constants/REGIONS'
+import Link from 'next/link'
 
 
 const endpoints = [
@@ -170,7 +171,15 @@ export default function EndpointsPage() {
             <TableBody>
               {endpoints.map((endpoint) => (
                 <TableRow key={endpoint.name} sx={{':hover': { cursor: 'pointer', bgcolor: 'var(--t-bg-color)' }}}>
+                  <Link
+                    href="/dashboard/endpoint"
+                    style={{
+                      textDecoration: 'none',
+                      color: 'inherit',
+                    }}
+                  >
                   <TableCell><StatusBadge status={endpoint.status}/></TableCell>
+                    </Link>
                   <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.uptime}</CTypography></TableCell>
                   <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.name}</CTypography></TableCell>
                   <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.method}</CTypography></TableCell>
