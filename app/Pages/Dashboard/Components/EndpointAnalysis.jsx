@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Grid, Paper, Stack, TablePagination, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, MenuItem } from '@mui/material'
+import { Box, Grid, Paper, Stack, TablePagination, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, MenuItem, Button } from '@mui/material'
 import {
   LineChart,
   Line,
@@ -16,6 +16,7 @@ import CButton from '../../../Components/CButton'
 import CChip from '../../../Components/CChip'
 import CTypography from '../../../Components/CTypography'
 import CSelect from '../../../Components/CSelect'
+import CTextField from '../../../Components/CTextField'
 import Panel from './Panel'
 import REGIONS from '../Constants/REGIONS'
 
@@ -124,6 +125,24 @@ export default function EndpointAnalysis() {
 
   return (
     <Box>
+      {/* Go back to overview button */}
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+        <Button 
+          variant="outlined" 
+          size="small"
+          sx={{ 
+            borderColor: 'var(--p-b-color)',
+            color: 'var(--p-fg-color)',
+            '&:hover': {
+              backgroundColor: 'var(--t-bg-color)',
+              borderColor: 'var(--p-b-color)'
+            }
+          }}
+        >
+          Go Back to Overview
+        </Button>
+      </Box>
+      
       {/* Endpoint Details Section */}
       <Panel title='Endpoint Details' subtitle='Overview of the selected API endpoint'>
         <Grid container spacing={2} sx={{ mb: 3 }}>
@@ -165,6 +184,25 @@ export default function EndpointAnalysis() {
               <CTypography cvariant='p'>{endpointDetails.uptime}</CTypography>
             </Stack>
           </Grid>
+          {/* Notification Groups moved here */}
+          <Grid item xs={12}>
+            <Box sx={{ mt: 2 }}>
+              <CSelect
+                multiple
+                cvariant='s'
+                label='Notification Groups'
+                value={selectedGroups}
+                onChange={(e) => setSelectedGroups(e.target.value)}
+                fullWidth
+              >
+                {notificationGroups.map((group) => (
+                  <MenuItem key={group.id} value={group.id}>
+                    {group.name}
+                  </MenuItem>
+                ))}
+              </CSelect>
+            </Box>
+          </Grid>
         </Grid>
       </Panel>
 
@@ -174,7 +212,19 @@ export default function EndpointAnalysis() {
           <Grid item xs={12} md={6}>
             <Box sx={{ height: '300px' }}>
               <CTypography cvariant='caption' sx={{ mb: 1, display: 'block' }}>Latency Chart</CTypography>
-              <ResponsiveContainer width="100%" height="90%">
+              <CSelect
+                cvariant='s'
+                label='TimeFrame'
+                value='Last 24 Hours'
+                fullWidth
+                sx={{ mb: 2 }}
+              >
+                <MenuItem value='Last 1 Hour'>Last 1 Hour</MenuItem>
+                <MenuItem value='Last 6 Hours'>Last 6 Hours</MenuItem>
+                <MenuItem value='Last 12 Hours'>Last 12 Hours</MenuItem>
+                <MenuItem value='Last 24 Hours'>Last 24 Hours</MenuItem>
+              </CSelect>
+              <ResponsiveContainer width="100%" height="80%">
                 <LineChart data={latencyData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--p-b-color)" />
                   <XAxis dataKey="time" stroke="var(--t-fg-color)" />
@@ -203,7 +253,19 @@ export default function EndpointAnalysis() {
           <Grid item xs={12} md={6}>
             <Box sx={{ height: '300px' }}>
               <CTypography cvariant='caption' sx={{ mb: 1, display: 'block' }}>Uptime Chart</CTypography>
-              <ResponsiveContainer width="100%" height="90%">
+              <CSelect
+                cvariant='s'
+                label='TimeFrame'
+                value='Last 24 Hours'
+                fullWidth
+                sx={{ mb: 2 }}
+              >
+                <MenuItem value='Last 1 Hour'>Last 1 Hour</MenuItem>
+                <MenuItem value='Last 6 Hours'>Last 6 Hours</MenuItem>
+                <MenuItem value='Last 12 Hours'>Last 12 Hours</MenuItem>
+                <MenuItem value='Last 24 Hours'>Last 24 Hours</MenuItem>
+              </CSelect>
+              <ResponsiveContainer width="100%" height="80%">
                 <BarChart data={uptimeData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--p-b-color)" />
                   <XAxis dataKey="time" stroke="var(--t-fg-color)" />
@@ -227,6 +289,14 @@ export default function EndpointAnalysis() {
 
       {/* Previous Checks Table */}
       <Panel title='Previous Checks' subtitle='Historical check results'>
+        <Box sx={{ mb: 2 }}>
+          <CTextField
+            cvariant='p'
+            label='Search'
+            placeholder='Search by endpoint or region...'
+            fullWidth
+          />
+        </Box>
         <TableContainer
           component={Paper}
           sx={{
@@ -283,7 +353,8 @@ export default function EndpointAnalysis() {
             textAlign: 'center',
             border: '1px solid var(--p-b-color)',
             boxShadow: 'none !important',
-            borderRadius: '12px'
+            borderRadius: '12px',
+            mt: 2 // Added 16px margin (2 units) between sections
           }}  
         >
           <Table size='small'>
@@ -321,33 +392,6 @@ export default function EndpointAnalysis() {
           rowsPerPageOptions={[]}
           rowsPerPage={50}
         />
-      </Panel>
-
-      {/* Notification Groups */}
-      <Panel title='Notification Groups' subtitle='Select groups to receive alerts for this endpoint'>
-        <Grid container spacing={2} sx={{ mb: 3 }}>
-          <Grid item xs={12}>
-            <CSelect
-              multiple
-              cvariant='s'
-              label='Notification Groups'
-              value={selectedGroups}
-              onChange={(e) => setSelectedGroups(e.target.value)}
-              fullWidth
-            >
-              {notificationGroups.map((group) => (
-                <MenuItem key={group.id} value={group.id}>
-                  {group.name}
-                </MenuItem>
-              ))}
-            </CSelect>
-          </Grid>
-          <Grid item xs={12}>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <CButton size='large' label='Save Changes' cvariant='secondary' />
-            </Box>
-          </Grid>
-        </Grid>
       </Panel>
     </Box>
   )
