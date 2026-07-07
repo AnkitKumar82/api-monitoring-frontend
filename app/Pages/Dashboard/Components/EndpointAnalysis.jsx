@@ -123,6 +123,22 @@ const StatusBadge = ({ status }) => {
 export default function EndpointAnalysis() {
   const [selectedGroups, setSelectedGroups] = useState([1, 3]) // Pre-selected groups
 
+  // State for search filters
+  const [checksFilter, setChecksFilter] = useState({
+    endpoint: '',
+    status: [],
+    region: []
+  });
+
+  const [incidentsFilter, setIncidentsFilter] = useState({
+    endpoint: '',
+    detail: ''
+  });
+
+  // State for timeframe selectors
+  const [latencyTimeframe, setLatencyTimeframe] = useState('Last 24 Hours');
+  const [uptimeTimeframe, setUptimeTimeframe] = useState('Last 24 Hours');
+
   return (
     <Box>
       {/* Go back to overview button */}
@@ -209,13 +225,14 @@ export default function EndpointAnalysis() {
       {/* Charts Section */}
       <Panel title='API Health' subtitle='Performance metrics over time'>
         <Grid container spacing={2} sx={{ mb: 3 }}>
-          <Grid item xs={12} md={6}>
+<Grid item xs={12} md={6}>
             <Box sx={{ height: '300px' }}>
               <CTypography cvariant='caption' sx={{ mb: 1, display: 'block' }}>Latency Chart</CTypography>
               <CSelect
                 cvariant='s'
                 label='TimeFrame'
-                value='Last 24 Hours'
+                value={latencyTimeframe}
+                onChange={(e) => setLatencyTimeframe(e.target.value)}
                 fullWidth
                 sx={{ mb: 2 }}
               >
@@ -250,13 +267,14 @@ export default function EndpointAnalysis() {
               </ResponsiveContainer>
             </Box>
           </Grid>
-          <Grid item xs={12} md={6}>
+<Grid item xs={12} md={6}>
             <Box sx={{ height: '300px' }}>
               <CTypography cvariant='caption' sx={{ mb: 1, display: 'block' }}>Uptime Chart</CTypography>
               <CSelect
                 cvariant='s'
                 label='TimeFrame'
-                value='Last 24 Hours'
+                value={uptimeTimeframe}
+                onChange={(e) => setUptimeTimeframe(e.target.value)}
                 fullWidth
                 sx={{ mb: 2 }}
               >
@@ -289,14 +307,46 @@ export default function EndpointAnalysis() {
 
       {/* Previous Checks Table */}
       <Panel title='Previous Checks' subtitle='Historical check results'>
-        <Box sx={{ mb: 2 }}>
-          <CTextField
-            cvariant='p'
-            label='Search'
-            placeholder='Search by endpoint or region...'
-            fullWidth
-          />
-        </Box>
+        <Grid container spacing={2} sx={{ mb: 2 }}>
+          <Grid item xs={12} md={4}>
+            <CTextField
+              cvariant='p'
+              label='Endpoint'
+              placeholder='Search by endpoint...'
+              value={checksFilter.endpoint}
+              onChange={(e) => setChecksFilter({...checksFilter, endpoint: e.target.value})}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <CSelect
+              multiple
+              cvariant='s'
+              label='Status'
+              value={checksFilter.status}
+              onChange={(e) => setChecksFilter({...checksFilter, status: e.target.value})}
+              fullWidth
+            >
+              <MenuItem value={'healthy'}>Healthy</MenuItem>
+              <MenuItem value={'degraded'}>Degraded</MenuItem>
+              <MenuItem value={'down'}>Down</MenuItem>
+            </CSelect>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <CSelect
+              multiple
+              cvariant='s'
+              label='Region'
+              value={checksFilter.region}
+              onChange={(e) => setChecksFilter({...checksFilter, region: e.target.value})}
+              fullWidth
+            >
+              <MenuItem value={'US-East'}>US-East</MenuItem>
+              <MenuItem value={'EU-West'}>EU-West</MenuItem>
+              <MenuItem value={'AP-South'}>AP-South</MenuItem>
+            </CSelect>
+          </Grid>
+        </Grid>
         <TableContainer
           component={Paper}
           sx={{
@@ -317,15 +367,23 @@ export default function EndpointAnalysis() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {checks.map((check, index) => (
-                <TableRow key={index} sx={{':hover': { cursor: 'pointer', bgcolor: 'var(--t-bg-color)' }}}>
-                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{check.timestamp}</CTypography></TableCell>
-                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{check.endpoint}</CTypography></TableCell>
-                  <TableCell><StatusBadge status={check.status} /></TableCell>
-                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{check.latency}</CTypography></TableCell>
-                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{check.region}</CTypography></TableCell>
-                </TableRow>
-              ))}
+              {checks
+                .filter(check => {
+                  return (
+                    (checksFilter.endpoint === '' || check.endpoint.toLowerCase().includes(checksFilter.endpoint.toLowerCase())) &&
+                    (checksFilter.status.length === 0 || checksFilter.status.includes(check.status)) &&
+                    (checksFilter.region.length === 0 || checksFilter.region.includes(check.region))
+                  );
+                })
+                .map((check, index) => (
+                  <TableRow key={index} sx={{':hover': { cursor: 'pointer', bgcolor: 'var(--t-bg-color)' }}}>
+                    <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{check.timestamp}</CTypography></TableCell>
+                    <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{check.endpoint}</CTypography></TableCell>
+                    <TableCell><StatusBadge status={check.status} /></TableCell>
+                    <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{check.latency}</CTypography></TableCell>
+                    <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{check.region}</CTypography></TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
@@ -347,6 +405,28 @@ export default function EndpointAnalysis() {
 
       {/* Incidents Table */}
       <Panel title='Incidents' subtitle='Active and resolved issues'>
+        <Grid container spacing={2} sx={{ mb: 2 }}>
+          <Grid item xs={12} md={6}>
+            <CTextField
+              cvariant='p'
+              label='Endpoint'
+              placeholder='Search by endpoint...'
+              value={incidentsFilter.endpoint}
+              onChange={(e) => setIncidentsFilter({...incidentsFilter, endpoint: e.target.value})}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <CTextField
+              cvariant='p'
+              label='Detail'
+              placeholder='Search by detail...'
+              value={incidentsFilter.detail}
+              onChange={(e) => setIncidentsFilter({...incidentsFilter, detail: e.target.value})}
+              fullWidth
+            />
+          </Grid>
+        </Grid>
         <TableContainer
           component={Paper}
           sx={{
@@ -366,15 +446,22 @@ export default function EndpointAnalysis() {
                 <TableCell sx={{ color: 'var(--p-fg-color)', fontWeight: 700 }}>Duration</TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {incidents.map((incident, index) => (
-                <TableRow key={index} sx={{':hover': { cursor: 'pointer', bgcolor: 'var(--t-bg-color)' }}}>
-                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.time}</CTypography></TableCell>
-                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.endpoint}</CTypography></TableCell>
-                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.detail}</CTypography></TableCell>
-                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.duration}</CTypography></TableCell>
-                </TableRow>
-              ))}
+<TableBody>
+              {incidents
+                .filter(incident => {
+                  return (
+                    (incidentsFilter.endpoint === '' || incident.endpoint.toLowerCase().includes(incidentsFilter.endpoint.toLowerCase())) &&
+                    (incidentsFilter.detail === '' || incident.detail.toLowerCase().includes(incidentsFilter.detail.toLowerCase()))
+                  );
+                })
+                .map((incident, index) => (
+                  <TableRow key={index} sx={{':hover': { cursor: 'pointer', bgcolor: 'var(--t-bg-color)' }}}>
+                    <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.time}</CTypography></TableCell>
+                    <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.endpoint}</CTypography></TableCell>
+                    <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.detail}</CTypography></TableCell>
+                    <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.duration}</CTypography></TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
