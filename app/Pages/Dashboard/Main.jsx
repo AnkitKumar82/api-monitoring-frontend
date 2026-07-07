@@ -43,16 +43,7 @@ import CreateEndpointsPage from './Components/CreateEndpointsPage'
 import AppIcon from '../../Commons/AppIcon'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-
-const sidebarItems = [
-  { label: 'Dashboard', icon: DashboardRounded },
-  { label: 'Incidents', icon: WarningRounded },
-  { label: 'Notifications', icon: NotificationsRounded },
-  { label: 'Team', icon: GroupRounded },
-  { label: 'Settings', icon: SettingsRounded },
-  { label: 'Status Pages', icon: PublicRounded },
-  { label: 'Billing', icon: CreditCardRounded }
-]
+import VIEWS from './Constants/VIEWS'
 
 const Sidebar = ({ open, onClose, activeSection, onSelect }) => {
   const content = (
@@ -81,31 +72,39 @@ const Sidebar = ({ open, onClose, activeSection, onSelect }) => {
         </Stack>
 
         <List disablePadding>
-          {sidebarItems.map((item) => {
+          {VIEWS.map((item) => {
             const Icon = item.icon
             return (
-              <ListItem key={item.label} disablePadding sx={{ mb: 0.5 }}>
-                <ListItemButton
-                  selected={activeSection === item.label.toLowerCase()}
-                  onClick={() => { onSelect(item.label.toLowerCase()); onClose() }}
-                  disableRipple
-                  sx={{
-                    borderRadius: '8px',
-                    ':hover': { backgroundColor: 'var(--t-bg-color)' },
-                    '&.Mui-selected': { backgroundColor: 'var(--t-bg-color)' },
-                    '&.Mui-selected:hover': { backgroundColor: 'var(--t-bg-color)' }
-                  }}
-                >
-                  <ListItemText
-                    primary={item.label}
-                    primaryTypographyProps={{
-                      fontSize: '0.8rem',
-                      fontWeight: activeSection === item.label.toLowerCase() ? 700 : 500,
-                      color: activeSection === item.label.toLowerCase() ? 'var(--p-fg-color)' : 'var(--s-fg-color)'
+              <Link 
+                href={`/dashboard/${item.slug}`}
+                style={{
+                  textDecoration: 'none',
+                  color: 'inherit',
+                }}
+              >
+                <ListItem key={item.label} disablePadding sx={{ mb: 0.5 }}>
+                  <ListItemButton
+                    selected={activeSection === item.label.toLowerCase()}
+                    onClick={() => { onSelect(item.label.toLowerCase()); onClose() }}
+                    disableRipple
+                    sx={{
+                      borderRadius: '8px',
+                      ':hover': { backgroundColor: 'var(--t-bg-color)' },
+                      '&.Mui-selected': { backgroundColor: 'var(--t-bg-color)' },
+                      '&.Mui-selected:hover': { backgroundColor: 'var(--t-bg-color)' }
                     }}
-                  />
-                </ListItemButton>
-              </ListItem>
+                  >
+                    <ListItemText
+                      primary={item.label}
+                      primaryTypographyProps={{
+                        fontSize: '0.8rem',
+                        fontWeight: activeSection === item.label.toLowerCase() ? 700 : 500,
+                        color: activeSection === item.label.toLowerCase() ? 'var(--p-fg-color)' : 'var(--s-fg-color)'
+                      }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              </Link>
             )
           })}
         </List>
@@ -155,31 +154,13 @@ const Sidebar = ({ open, onClose, activeSection, onSelect }) => {
   )
 }
 
-export default function Main() {
+export default function Main({ view }) {
   const router = useRouter()
-  const { view, id } = router.query 
 
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [activeSection, setActiveSection] = useState(view || 'dashboard')
+  const [activeSection, setActiveSection] = useState('dashboard')
 
-  const renderSection = () => {
-    switch (activeSection) {
-      case 'incidents':
-        return <IncidentsPage />
-      case 'notifications':
-        return <NotificationsPage />
-      case 'team':
-        return <TeamPage />
-      case 'settings':
-        return <SettingsPage />
-      case 'status pages':
-        return <StatusPagesPage />
-      case 'billing':
-        return <BillingPage />
-      default:
-        return <DashboardOverview />
-    }
-  }
+  const viewConstant = VIEWS.find((item) => item.id === view.id) || {}
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', width: '100%' }}>
@@ -208,7 +189,7 @@ export default function Main() {
               py: '16px'
             }}
           >
-            {renderSection()}
+            {viewConstant.pageComponent}
           </Box>
         </Container>
       </Box>

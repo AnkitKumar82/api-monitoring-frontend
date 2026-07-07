@@ -1,10 +1,10 @@
 import Head from 'next/head'
-import Home from '../app/Pages/Home'
-import CustomAlert from '../app/Commons/CustomAlert'
+import CustomAlert from '../../app/Commons/CustomAlert'
 import Script from 'next/script'
-import Dashboard from '../app/Pages/Dashboard'
+import Dashboard from '../../app/Pages/Dashboard'
+import VIEWS from '../../app/Pages/Dashboard/Constants/VIEWS'
 
-function renderedPage() {
+function renderedPage({ view }) {
   return (
     <div>
       <Head>
@@ -35,7 +35,7 @@ function renderedPage() {
           width: '100vw',
           minHeight: '100vh'
         }}>
-        <Dashboard />
+        <Dashboard view={view}/>
         <CustomAlert />
         <Script
           id="website-schema"
@@ -54,6 +54,49 @@ function renderedPage() {
       </main>
     </div>
   )
+}
+
+
+export const getStaticPaths = async () => {
+  const paths = VIEWS.map((view) => ({
+    params: {
+      slug: view.slug
+    }
+  }))
+
+  return {
+    paths,
+    fallback: false
+  }
+}
+
+export const getStaticProps = async ({
+  params,
+}) => {
+  const view = VIEWS.find(
+    (view) =>
+      view.slug === params?.slug
+  )
+
+  if (!view) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      }
+    }
+  }
+
+  const result = {
+    id: view.id,
+    slug: view.slug
+  }
+
+  return {
+    props: {
+      view: result
+    }
+  }
 }
 
 export default renderedPage

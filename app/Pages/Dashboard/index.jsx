@@ -2,10 +2,10 @@ import * as React from 'react'
 import Main from './Main'
 import { Box } from '@mui/material'
 
-function Dashboard () {
+function Dashboard (props) {
   return (
     <Box>
-      <Main />
+      <Main view={props.view}/>
     </Box>
   )
 }
