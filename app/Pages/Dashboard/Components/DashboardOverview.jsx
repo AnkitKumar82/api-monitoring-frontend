@@ -57,7 +57,7 @@ export default function DashboardOverview() {
           <CTypography cvariant='c' >A developer-first view of uptime, latency, and active incidents across your services.</CTypography>
         </Box>
         <Stack direction='row' spacing={1.25}>
-          <CButton label='Export' cvariant='s' size='normal'/>
+          {/* <CButton label='Export' cvariant='s' size='normal'/> */}
           <CButton label='Add Endpoint' cvariant='s' active startIcon={AddRounded} size='normal'/>
         </Stack>
       </Stack>

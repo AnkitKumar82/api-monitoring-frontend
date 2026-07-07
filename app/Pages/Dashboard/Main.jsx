@@ -177,7 +177,7 @@ export default function Main() {
       case 'billing':
         return <BillingPage />
       default:
-        return <CreateEndpointsPage />
+        return <DashboardOverview />
     }
   }
 

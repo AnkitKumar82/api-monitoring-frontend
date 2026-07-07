@@ -77,6 +77,7 @@ export default function Main() {
     <Box 
       display="flex" 
       flexDirection="column"
+      id="home"
     >
       {/* ===================== NavBar ===================== */}
       <NavBar />

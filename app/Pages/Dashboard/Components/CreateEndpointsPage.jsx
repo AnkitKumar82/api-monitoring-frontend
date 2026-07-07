@@ -62,7 +62,7 @@ const httpMethods = [
 
 // Mock data for response types
 const responseTypes = [
-  { value: 'status_code', label: 'HTTP Status Code (e.g. 200, 404)' },
+  { value: 'status_code', label: 'HTTP Status Code (e.g. 200, 204)' },
   { value: 'json_match', label: 'JSON Response Matching' },
   { value: 'xml_match', label: 'XML Response Matching' },
   { value: 'string_match', label: 'String Matching in Response' }
@@ -225,7 +225,7 @@ const [formData, setFormData] = useState({
                 value={formData.urls}
                 onChange={handleInputChange}
                 error={!!errors.urls}
-                helperText={errors.urls || 'Enter one URL per line or comma separated (e.g. https://api.example.com/users)'}
+                helperText={errors.urls || 'Enter one URL per line (e.g. https://api.example.com/users)'}
                 multiline
                 rows={4}
               />
@@ -239,7 +239,7 @@ const [formData, setFormData] = useState({
                 value={formData.headers}
                 onChange={handleInputChange}
                 error={!!errors.headers}
-                helperText={errors.headers || 'Enter headers as key: value pairs (e.g. x-api-key: xxxxxx-xxxxx-xxxxxx)'}
+                helperText={errors.headers || 'Enter one header per line as key: value pairs (e.g. x-api-key: xxxxxx-xxxxx-xxxxxx)'}
                 multiline
                 rows={2}
               />
@@ -273,7 +273,7 @@ const [formData, setFormData] = useState({
                   value={formData.statusCode}
                   onChange={handleInputChange}
                   error={!!errors.statusCode}
-                  helperText={errors.statusCode || 'Enter HTTP status code(s) (e.g. 200, 404)'}
+                  helperText={errors.statusCode || 'Enter HTTP status code(s) (e.g. 200, 204)'}
                 />
               </Grid>
             )}

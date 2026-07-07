@@ -79,6 +79,25 @@ export default function NavBar() {
               },
             }}
           >
+             <Link
+              href="#home"
+              style={{
+                textDecoration: 'none',
+                color: 'inherit',
+              }}
+            >
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'var(--s-fg-color)',
+                  '&:hover': {
+                    color: 'var(--p-fg-color)',
+                  },
+                }}
+              >
+                Home
+              </Typography>
+            </Link>
             <Link
               href="#features"
               style={{
