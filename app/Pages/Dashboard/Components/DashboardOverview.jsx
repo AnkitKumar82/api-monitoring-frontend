@@ -13,6 +13,7 @@ import CChip from '../../../Components/CChip'
 import CTypography from '../../../Components/CTypography'
 import Panel from './Panel'
 import EndpointsPage from './EndpointsPage'
+import Link from 'next/link'
 
 const metricCards = [
   { title: 'Healthy APIs', url: '/', value: '23', trend: '', icon: CheckCircleRounded, color: 'success' },
@@ -57,8 +58,15 @@ export default function DashboardOverview() {
           <CTypography cvariant='c' >A developer-first view of uptime, latency, and active incidents across your services.</CTypography>
         </Box>
         <Stack direction='row' spacing={1.25}>
-          {/* <CButton label='Export' cvariant='s' size='normal'/> */}
-          <CButton label='Add Endpoint' cvariant='s' active startIcon={AddRounded} size='normal'/>
+          <Link
+            href="/dashboard/create-endpoint"
+            style={{
+              textDecoration: 'none',
+              color: 'inherit',
+            }}
+          >
+            <CButton label='Add Endpoint' cvariant='s' active startIcon={AddRounded} size='normal'/>
+          </Link>
         </Stack>
       </Stack>
 

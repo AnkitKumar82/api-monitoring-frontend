@@ -72,7 +72,7 @@ const Sidebar = ({ open, onClose, activeSection, onSelect }) => {
         </Stack>
 
         <List disablePadding>
-          {VIEWS.map((item) => {
+          {VIEWS.filter((item) => item.inSideBar).map((item) => {
             const Icon = item.icon
             return (
               <Link 

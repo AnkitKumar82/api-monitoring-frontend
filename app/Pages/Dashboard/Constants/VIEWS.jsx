@@ -13,43 +13,56 @@ const VIEWS = [
   {
     id: 'OVERVIEW', 
     slug: 'overview', 
-    label: 'Overview', 
+    label: 'Overview',
+    inSideBar: true,
     pageComponent: <DashboardOverview />
+  },
+  {
+    id: 'CREATE_ENDPOINT', 
+    slug: 'create-endpoint', 
+    label: 'Overview', 
+    pageComponent: <CreateEndpointsPage />
   },
   {
     id: 'INCIDENTS', 
     slug: 'incidents', 
-    label: 'Incidents', 
+    label: 'Incidents',
+    inSideBar: true,
     pageComponent: <IncidentsPage />
   },
   {
     id: 'NOTIFICATIONS', 
     slug: 'notifications', 
-    label: 'Notifications', 
+    label: 'Notifications',
+    inSideBar: true,
     pageComponent: <NotificationsPage />
   },
   {
     id: 'TEAM', 
     slug: 'team', 
     label: 'Team',
+    inSideBar: true,
     pageComponent: <TeamPage />
   },
   {
     id: 'SETTINGS', 
     slug: 'settings', 
     label: 'Settings',
+    inSideBar: true,
     pageComponent: <SettingsPage />
   },
   {
     id: 'STATUS_PAGES', 
     slug: 'status-pages', 
     label: 'Status Pages',
+    inSideBar: true,
     pageComponent: <StatusPagesPage />
   },
   {
     id: 'BILLING', 
     slug: 'billing', 
     label: 'Billing',
+    inSideBar: true,
     pageComponent: <BillingPage />
   }
 ]
