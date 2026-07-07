@@ -19,6 +19,7 @@ import CSelect from '../../../Components/CSelect'
 import CTextField from '../../../Components/CTextField'
 import Panel from './Panel'
 import REGIONS from '../Constants/REGIONS'
+import Link from 'next/link'
 
 // Mock data for endpoint details
 const endpointDetails = {
@@ -135,32 +136,32 @@ export default function EndpointAnalysis() {
     detail: ''
   });
 
-  // State for timeframe selectors
-  const [latencyTimeframe, setLatencyTimeframe] = useState('Last 24 Hours');
-  const [uptimeTimeframe, setUptimeTimeframe] = useState('Last 24 Hours');
+// State for timeframe selectors
+const [latencyTimeframe, setLatencyTimeframe] = useState('Last 24 Hours');
+const [uptimeTimeframe, setUptimeTimeframe] = useState('Last 24 Hours');
+// State for region selectors
+const [latencyRegion, setLatencyRegion] = useState('');
+const [uptimeRegion, setUptimeRegion] = useState('');
 
   return (
     <Box>
-      {/* Go back to overview button */}
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-        <Button 
-          variant="outlined" 
-          size="small"
-          sx={{ 
-            borderColor: 'var(--p-b-color)',
-            color: 'var(--p-fg-color)',
-            '&:hover': {
-              backgroundColor: 'var(--t-bg-color)',
-              borderColor: 'var(--p-b-color)'
-            }
-          }}
-        >
-          Go Back to Overview
-        </Button>
-      </Box>
-      
       {/* Endpoint Details Section */}
-      <Panel title='Endpoint Details' subtitle='Overview of the selected API endpoint'>
+      <Panel
+        title='Endpoint Details'
+        subtitle='Overview of the selected API endpoint'
+        sx={{ mb: 3 }}
+        actions={
+          <Link
+            href="/dashboard/overview"
+            style={{
+              textDecoration: 'none',
+              color: 'inherit',
+            }}
+          >
+            <CButton label='Back to Overview' cvariant='s' size='normal'/>
+          </Link>
+        }
+      >
         <Grid container spacing={2} sx={{ mb: 3 }}>
           <Grid item xs={12} md={6}>
             <Stack direction='column' spacing={1}>
@@ -223,11 +224,11 @@ export default function EndpointAnalysis() {
       </Panel>
 
       {/* Charts Section */}
-      <Panel title='API Health' subtitle='Performance metrics over time'>
-        <Grid container spacing={2} sx={{ mb: 3 }}>
-<Grid item xs={12} md={6}>
+      <Panel title='API Health' subtitle='Performance metrics over time' sx={{ mb: 3 }}>
+        <Grid container spacing={2} sx={{ mb: 3, pb: 3 }}>
+          <Grid item xs={12} md={6}>
             <Box sx={{ height: '300px' }}>
-              <CTypography cvariant='caption' sx={{ mb: 1, display: 'block' }}>Latency Chart</CTypography>
+              <CTypography cvariant='th' sx={{ color:'var(--p-fg-color)', mb: '16px' }}>Latency Chart</CTypography>
               <CSelect
                 cvariant='s'
                 label='TimeFrame'
@@ -236,10 +237,21 @@ export default function EndpointAnalysis() {
                 fullWidth
                 sx={{ mb: 2 }}
               >
-                <MenuItem value='Last 1 Hour'>Last 1 Hour</MenuItem>
-                <MenuItem value='Last 6 Hours'>Last 6 Hours</MenuItem>
-                <MenuItem value='Last 12 Hours'>Last 12 Hours</MenuItem>
                 <MenuItem value='Last 24 Hours'>Last 24 Hours</MenuItem>
+                <MenuItem value='Last 7 Days'>Last 7 Days</MenuItem>
+                <MenuItem value='Last 30 Days'>Last 30 Days</MenuItem>
+              </CSelect>
+              <CSelect
+                cvariant='s'
+                label='Region'
+                value={latencyRegion}
+                onChange={(e) => setLatencyRegion(e.target.value)}
+                fullWidth
+                sx={{ mb: 2 }}
+              >
+                <MenuItem value='US'>US</MenuItem>
+                <MenuItem value='EU'>Europe</MenuItem>
+                <MenuItem value='SG'>Singapore</MenuItem>
               </CSelect>
               <ResponsiveContainer width="100%" height="80%">
                 <LineChart data={latencyData}>
@@ -267,23 +279,35 @@ export default function EndpointAnalysis() {
               </ResponsiveContainer>
             </Box>
           </Grid>
-<Grid item xs={12} md={6}>
-            <Box sx={{ height: '300px' }}>
-              <CTypography cvariant='caption' sx={{ mb: 1, display: 'block' }}>Uptime Chart</CTypography>
+          <Grid item xs={12} md={6}>
+            <Box>
+              <CTypography cvariant='th' sx={{ color:'var(--p-fg-color)', mb: '16px' }}>Uptime Chart</CTypography>
               <CSelect
                 cvariant='s'
                 label='TimeFrame'
                 value={uptimeTimeframe}
                 onChange={(e) => setUptimeTimeframe(e.target.value)}
-                fullWidth
+                // fullWidth
                 sx={{ mb: 2 }}
               >
-                <MenuItem value='Last 1 Hour'>Last 1 Hour</MenuItem>
-                <MenuItem value='Last 6 Hours'>Last 6 Hours</MenuItem>
-                <MenuItem value='Last 12 Hours'>Last 12 Hours</MenuItem>
                 <MenuItem value='Last 24 Hours'>Last 24 Hours</MenuItem>
+                <MenuItem value='Last 7 Days'>Last 7 Days</MenuItem>
+                <MenuItem value='Last 30 Days'>Last 30 Days</MenuItem>
               </CSelect>
-              <ResponsiveContainer width="100%" height="80%">
+              <CSelect
+                cvariant='s'
+                label='Region'
+                value={uptimeRegion}
+                onChange={(e) => setUptimeRegion(e.target.value)}
+                // fullWidth
+                sx={{ mb: 2 }}
+              >
+                <MenuItem value=''>All Regions</MenuItem>
+                <MenuItem value='US'>US</MenuItem>
+                <MenuItem value='EU'>Europe</MenuItem>
+                <MenuItem value='SG'>Singapore</MenuItem>
+              </CSelect>
+              <ResponsiveContainer>
                 <BarChart data={uptimeData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--p-b-color)" />
                   <XAxis dataKey="time" stroke="var(--t-fg-color)" />
@@ -308,7 +332,7 @@ export default function EndpointAnalysis() {
       {/* Previous Checks Table */}
       <Panel title='Previous Checks' subtitle='Historical check results'>
         <Grid container spacing={2} sx={{ mb: 2 }}>
-          <Grid item xs={12} md={4}>
+<Grid item xs={12} md={4}>
             <CTextField
               cvariant='p'
               label='Endpoint'
@@ -406,7 +430,7 @@ export default function EndpointAnalysis() {
       {/* Incidents Table */}
       <Panel title='Incidents' subtitle='Active and resolved issues'>
         <Grid container spacing={2} sx={{ mb: 2 }}>
-          <Grid item xs={12} md={6}>
+<Grid item xs={12} md={6}>
             <CTextField
               cvariant='p'
               label='Endpoint'
