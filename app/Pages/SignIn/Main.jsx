@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 import {
   Box,
@@ -22,6 +23,7 @@ import CTextField from '../../Components/CTextField'
 import CButton from '../../Components/CButton'
 import CCheckbox from '../../Components/CCheckbox'
 import CToggle from '../../Components/CToggle'
+import { userApi } from '../../Helpers/userApi'
 
 const GlassCard = ({ style = {}, children }) => (
   <Card
@@ -50,6 +52,8 @@ export default function Main() {
   const [showPassword, setShowPassword] = useState(false)
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [serverError, setServerError] = useState('')
+  const router = useRouter()
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -94,13 +98,22 @@ export default function Main() {
     }
 
     setIsSubmitting(true)
-    // Simulate API call
-    setTimeout(() => {
+    setServerError('')
+
+    try {
+      // Call the signin API
+      const result = await userApi.signin(formData.email, formData.password)
+      
+      // Store token in localStorage or context (simplified here)
+      localStorage.setItem('token', result.token)
+      
+      // Redirect to dashboard
+      router.push('/dashboard')
+    } catch (error) {
+      setServerError(error.message || 'Sign in failed. Please try again.')
+    } finally {
       setIsSubmitting(false)
-      // Here you would typically make an API call to login the user
-      console.log('Login data:', formData)
-      // Redirect or show success message
-    }, 1000)
+    }
   }
 
   return (
@@ -133,6 +146,11 @@ export default function Main() {
                 {/* Login Form */}
                 <Box component='form' onSubmit={handleSubmit} noValidate>
                   <Stack spacing={2.5}>
+                    {serverError && (
+                      <Typography color='error' sx={{ textAlign: 'center' }}>
+                        {serverError}
+                      </Typography>
+                    )}
                     {/* Email Field */}
                     <CTextField
                       cvariant='s'
@@ -168,7 +186,12 @@ export default function Main() {
 
                     {/* Remember Me and Forgot Password */}
                     <Stack direction='row' justifyContent='space-between' alignItems='center'>
-                      <span></span>
+                      <CCheckbox
+                        label='Remember me'
+                        name='rememberMe'
+                        checked={formData.rememberMe}
+                        onChange={handleChange}
+                      />
                       <Link
                         href='/password-reset'
                         style={{
