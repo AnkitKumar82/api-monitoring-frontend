@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Grid, Paper, Stack, MenuItem, TablePagination, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material'
 import CTypography from '../../../Components/CTypography'
 import CButton from '../../../Components/CButton'
@@ -9,60 +9,15 @@ import CChip from '../../../Components/CChip'
 import CBadge from '../../../Components/CBadge'
 import Panel from './Panel'
 import { EmailRounded as EmailIcon, AddRounded as AddIcon, EditRounded as EditIcon, DeleteRounded as DeleteIcon, VisibilityRounded as VisibilityIcon, NotificationsRounded as NotificationsIcon } from '@mui/icons-material'
+import { fetchNotificationChannels, createNotificationChannel, updateNotificationChannel, deleteNotificationChannel } from '../../../Helpers/notificationChannelApi'
 
-// Mock data for notification channels
-const mockChannels = [
-  {
-    id: 1,
-    name: 'Backend Team',
-    type: 'Email',
-    destination: ['backend@example.com', 'devops@example.com', 'admin@example.com'],
-    status: 'Active',
-    usedBy: 12
-  },
-  {
-    id: 2,
-    name: 'Production Slack',
-    type: 'Slack',
-    destination: 'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX',
-    status: 'Active',
-    usedBy: 3
-  },
-  {
-    id: 3,
-    name: 'QA Alerts',
-    type: 'Slack',
-    destination: 'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX',
-    status: 'Pending Verification',
-    usedBy: 0
-  },
-  {
-    id: 4,
-    name: 'Engineering',
-    type: 'Email',
-    destination: ['backend@example.com', 'devops@example.com'],
-    status: 'Active',
-    usedBy: 5
-  },
-  {
-    id: 5,
-    name: 'DevOps',
-    type: 'Slack',
-    destination: 'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX',
-    status: 'Invalid',
-    usedBy: 8
-  }
-]
-
-// Mock data for summary cards
-const summaryData = {
-  totalChannels: mockChannels.length,
-  emailChannels: mockChannels.filter(channel => channel.type === 'Email').length,
-  slackChannels: mockChannels.filter(channel => channel.type === 'Slack').length
-}
+// Initial state for channels
+const initialChannels = []
 
 export default function NotificationsPage() {
-  const [channels, setChannels] = useState(mockChannels)
+  const [channels, setChannels] = useState(initialChannels)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [openModal, setOpenModal] = useState(false)
   const [modalType, setModalType] = useState('') // 'email' or 'slack'
   const [editingChannel, setEditingChannel] = useState(null)
@@ -78,6 +33,25 @@ export default function NotificationsPage() {
   const [openEditDeleteModal, setOpenEditDeleteModal] = useState(false)
   const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false)
   const [channelToDelete, setChannelToDelete] = useState(null)
+
+  // Load channels on component mount
+  useEffect(() => {
+    const loadChannels = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchNotificationChannels();
+        setChannels(data?.data || []);
+        setError(null);
+      } catch (err) {
+        setError(err.message);
+        setChannels([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadChannels();
+  }, []);
   // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -184,43 +158,60 @@ export default function NotificationsPage() {
   }
 
 // Submit form
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (validateForm()) {
-      if (editingChannel) {
-        // Update existing channel
-        setChannels(prev => prev.map(channel => 
-          channel.id === editingChannel.id ? { ...channel, name: formData.name } : channel
-        ))
-      } else {
-        // Add new channel
-        const newChannel = {
-          id: channels.length + 1,
-          name: formData.name,
-          type: formData.type,
-          destination: formData.type === 'Email' ? formData.recipients.filter(r => r.trim()) : formData.webhookUrl,
-          status: 'Active',
-          usedBy: 0
+      try {
+        if (editingChannel) {
+          // Update existing channel
+          const updatedChannel = await updateNotificationChannel(editingChannel.id, {
+            name: formData.name,
+            type: formData.type,
+            config: formData.type === 'Email' 
+              ? { email: { to: formData.recipients.filter(r => r.trim())[0] } }
+              : { slack: { webhookUrl: formData.webhookUrl } }
+          });
+          
+          setChannels(prev => prev.map(channel => 
+            channel.id === editingChannel.id ? { ...channel, name: updatedChannel.data.name } : channel
+          ))
+        } else {
+          // Add new channel
+          const newChannelData = {
+            name: formData.name,
+            type: formData.type,
+            config: formData.type === 'Email' 
+              ? { email: { to: formData.recipients.filter(r => r.trim())[0] } }
+              : { slack: { webhookUrl: formData.webhookUrl } }
+          };
+          
+          const newChannel = await createNotificationChannel(newChannelData);
+          
+          setChannels(prev => [...prev, {
+            id: newChannel.data._id,
+            name: newChannel.data.name,
+            type: newChannel.data.type,
+            destination: formData.type === 'Email' ? formData.recipients.filter(r => r.trim()) : formData.webhookUrl,
+            status: 'Active',
+            usedBy: 0
+          }]);
         }
-        setChannels(prev => [...prev, newChannel])
+        handleCloseModal()
+      } catch (err) {
+        setError(err.message);
       }
-      handleCloseModal()
     }
   }
 
-  // Delete channel
-  const handleDelete = (channelId) => {
-    const channel = channels.find(c => c.id === channelId);
-    setChannelToDelete(channel);
-    setOpenDeleteConfirm(true);
-  }
-
-  // Confirm delete
-  const confirmDelete = () => {
-    if (channelToDelete) {
-      setChannels(prev => prev.filter(channel => channel.id !== channelToDelete.id))
+// Delete channel
+  const handleDelete = async (channelId) => {
+    try {
+      await deleteNotificationChannel(channelId);
+      setChannels(prev => prev.filter(channel => channel.id !== channelId));
       setOpenDeleteConfirm(false);
       setChannelToDelete(null);
+    } catch (err) {
+      setError(err.message);
     }
   }
 
@@ -286,6 +277,69 @@ export default function NotificationsPage() {
         <CButton size="small" label='Delete' active cvariant='s'  onClick={() => handleDelete(channel.id)}/>
       </Stack>
     )
+  }
+
+// Calculate summary data from channels
+  const summaryData = {
+    totalChannels: channels.length,
+    emailChannels: channels.filter(channel => channel.type === 'Email').length,
+    slackChannels: channels.filter(channel => channel.type === 'Slack').length
+  };
+
+  // Render loading state
+  if (loading) {
+    return (
+      <Box>
+        <Panel 
+          title="Notifications" 
+          subtitle="Configure reusable notification channels for incident alerts and recovery notifications." 
+          actions={
+            <Stack direction="row" spacing={1}>
+              <CButton
+                active
+                label="Add Notification Channel"
+                cvariant="s"
+                startIcon={AddIcon}
+                size="normal"
+                onClick={() => handleAddChannel('email')}
+              />
+            </Stack>
+          }
+        >
+          <Box sx={{ p: 4, textAlign: 'center' }}>
+            <CTypography cvariant="h6">Loading notification channels...</CTypography>
+          </Box>
+        </Panel>
+      </Box>
+    );
+  }
+
+  // Render error state
+  if (error) {
+    return (
+      <Box>
+        <Panel 
+          title="Notifications" 
+          subtitle="Configure reusable notification channels for incident alerts and recovery notifications." 
+          actions={
+            <Stack direction="row" spacing={1}>
+              <CButton
+                active
+                label="Add Notification Channel"
+                cvariant="s"
+                startIcon={AddIcon}
+                size="normal"
+                onClick={() => handleAddChannel('email')}
+              />
+            </Stack>
+          }
+        >
+          <Box sx={{ p: 4, textAlign: 'center' }}>
+            <CTypography cvariant="h6" color="error">Error loading notification channels: {error}</CTypography>
+          </Box>
+        </Panel>
+      </Box>
+    );
   }
 
   return (
