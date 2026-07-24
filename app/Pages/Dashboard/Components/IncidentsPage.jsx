@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { Box, Grid, Paper, Stack, MenuItem, TablePagination, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 import { AddRounded, SearchRounded } from '@mui/icons-material'
@@ -9,14 +9,9 @@ import CTextField from '../../../Components/CTextField'
 import CSelect from '../../../Components/CSelect'
 import Panel from './Panel'
 import REGIONS from '../Constants/REGIONS'
+import { incidentApi } from '../../../Helpers/incidentApi'
 
-const incidents = [
-  { name: 'Payments API', resolveTime: '5 min ago', startTime: '2 min ago', uptime:'93.132%', reason:'Invalid status code: 404', method: 'GET', url: 'https://api.example.com/payments', interval: '1 min', regions: ["US","EU"], status: 'RESOLVED', latency: '121ms', lastCheck: '2 min ago' },
-  { name: 'Auth Service', resolveTime: '-', startTime: '5 min ago', uptime:'78.112%', reason:'Invalid status code: 410', method: 'POST', url: 'https://api.example.com/auth', interval: '30 sec', regions: ["US","SG"], status: 'ONGOING', latency: '245ms', lastCheck: '5 min ago' },
-  { name: 'Inventory API',resolveTime: '5 min ago', startTime: '10 min ago', uptime:'36.82%', reason:'Invalid status code: 500', method: 'GET', url: 'https://api.example.com/inventory', interval: '5 min', regions: ['SG'], status: 'RESOLVED', latency: '-', lastCheck: '10 min ago' },
-  { name: 'Inventory API',resolveTime: '-', startTime: '10 min ago', uptime:'36.82%', reason:'Invalid response structure: { "message": "Unknown" }', method: 'GET', url: 'https://api.example.com/inventory', interval: '5 min', regions: ["SG"], status: 'ONGOING', latency: '-', lastCheck: '10 min ago' }
-]
-
+const initialIncidents = []
 const StatusBadge = ({ status }) => {
   const map = {
     RESOLVED: { label: "Resolved", color: "var(--success-color)", background: "rgba(34,197,94,.12)" },
@@ -61,9 +56,36 @@ const StatusBadge = ({ status }) => {
 
 export default function IncidentsPage() {
   const [formData, setFormData] = useState({ endpoint: '', methods: [], regions: [], status: [] })
+  const [incidents, setIncidents] = useState(initialIncidents)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
   const router = useRouter()
-
   const { view, action, id } = router.query
+
+  // Get token from localStorage (assuming it's stored there after login)
+  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
+
+  useEffect(() => {
+    if (token) {
+      fetchIncidents()
+    }
+  }, [token])
+
+  const fetchIncidents = async () => {
+    if (!token) return
+    setLoading(true)
+    setError(null)
+    try {
+      // Fetch incidents with default parameters (can be extended with filters)
+      const result = await incidentApi.listIncidents(token)
+      setIncidents(result.data || [])
+    } catch (err) {
+      setError('Failed to fetch incidents')
+      console.error('Error fetching incidents:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -159,16 +181,30 @@ export default function IncidentsPage() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {incidents.map((incident) => (
-                <TableRow key={incident.name} sx={{':hover': { cursor: 'pointer', bgcolor: 'var(--t-bg-color)' }}}>
-                  <TableCell><StatusBadge status={incident.status}/></TableCell>
-                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.name}</CTypography></TableCell>
-                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.startTime}</CTypography></TableCell>
-                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.resolveTime}</CTypography></TableCell>
-                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.reason}</CTypography></TableCell>
-                  <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.lastCheck}</CTypography></TableCell>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={6} align="center">Loading incidents...</TableCell>
                 </TableRow>
-              ))}
+              ) : error ? (
+                <TableRow>
+                  <TableCell colSpan={6} align="center">Error: {error}</TableCell>
+                </TableRow>
+              ) : incidents.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} align="center">No incidents found</TableCell>
+                </TableRow>
+              ) : (
+                incidents.map((incident) => (
+                  <TableRow key={incident._id || incident.name} sx={{':hover': { cursor: 'pointer', bgcolor: 'var(--t-bg-color)' }}}>
+                    <TableCell><StatusBadge status={incident.status}/></TableCell>
+                    <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.name || incident.endpointName}</CTypography></TableCell>
+                    <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.startTime || 'N/A'}</CTypography></TableCell>
+                    <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.resolveTime || 'N/A'}</CTypography></TableCell>
+                    <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.reason || 'N/A'}</CTypography></TableCell>
+                    <TableCell><CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{incident.lastCheck || 'N/A'}</CTypography></TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </TableContainer>
