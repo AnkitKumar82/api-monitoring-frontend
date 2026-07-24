@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Box, Stack, Table, TableBody, TableCell, MenuItem, TableContainer, TableHead, TableRow, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material'
 import CTypography from '../../../Components/CTypography'
 import CButton from '../../../Components/CButton'
@@ -7,26 +7,20 @@ import CTextField from '../../../Components/CTextField'
 import CSelect from '../../../Components/CSelect'
 import Panel from './Panel'
 import { AddRounded as AddIcon, DeleteRounded as DeleteIcon } from '@mui/icons-material'
-
-const initialMembers = [
-  { name: 'Maya Chen', email: 'maya@company.dev', role: 'Owner' },
-  { name: 'Maya Chen', email: 'maya@company.dev', role: 'Editor' },
-  { name: 'Liam Ortiz', email: 'liam@company.dev', role: 'Admin' },
-  { name: 'Nina Patel', email: 'nina@company.dev', role: 'Viewer' }
-]
+import { teamApi } from '../../../Helpers/teamApi'
 
 export default function TeamPage() {
-  const [members, setMembers] = useState(initialMembers)
+  const [teams, setTeams] = useState([])
+  const [loading, setLoading] = useState(true)
   const [openModal, setOpenModal] = useState(false)
-  const [editingMember, setEditingMember] = useState(null)
+  const [editingTeam, setEditingTeam] = useState(null)
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
-    role: 'Viewer'
+    description: ''
   })
   const [errors, setErrors] = useState({})
   const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false)
-  const [memberToDelete, setMemberToDelete] = useState(null)
+  const [teamToDelete, setTeamToDelete] = useState(null)
 
   // Handle form input changes
   const handleInputChange = (e) => {
@@ -34,25 +28,23 @@ export default function TeamPage() {
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  // Open modal for adding new team member
-  const handleAddMember = () => {
-    setEditingMember(null)
+  // Open modal for adding new team
+  const handleAddTeam = () => {
+    setEditingTeam(null)
     setFormData({
       name: '',
-      email: '',
-      role: 'Viewer'
+      description: ''
     })
     setErrors({})
     setOpenModal(true)
   }
 
-  // Open modal for editing existing team member
-  const handleEditMember = (member) => {
-    setEditingMember(member)
+  // Open modal for editing existing team
+  const handleEditTeam = (team) => {
+    setEditingTeam(team)
     setFormData({
-      name: member.name,
-      email: member.email,
-      role: member.role
+      name: team.name,
+      description: team.description
     })
     setErrors({})
     setOpenModal(true)
@@ -61,7 +53,7 @@ export default function TeamPage() {
   // Close modal
   const handleCloseModal = () => {
     setOpenModal(false)
-    setEditingMember(null)
+    setEditingTeam(null)
     setErrors({})
   }
 
@@ -75,61 +67,92 @@ export default function TeamPage() {
       newErrors.name = 'Name must be less than 50 characters'
     }
 
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required'
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Invalid email format'
-    }
-
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
   // Submit form
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (validateForm()) {
-      if (editingMember) {
-        // Update existing member
-        setMembers(prev => prev.map(member => 
-          member.email === editingMember.email ? { ...member, name: formData.name, email: formData.email, role: formData.role } : member
-        ))
-      } else {
-        // Add new member
-        const newMember = {
-          name: formData.name,
-          email: formData.email,
-          role: formData.role
+      try {
+        const token = localStorage.getItem('authToken'); // Assuming token is stored in localStorage
+        
+        if (editingTeam) {
+          // Update existing team
+          const updatedTeam = await teamApi.updateTeam(editingTeam._id, {
+            name: formData.name,
+            description: formData.description
+          }, token);
+          
+          setTeams(prev => prev.map(team => 
+            team._id === editingTeam._id ? updatedTeam : team
+          ))
+        } else {
+          // Add new team
+          const newTeam = await teamApi.createTeam({
+            name: formData.name,
+            description: formData.description
+          }, token);
+          
+          setTeams(prev => [...prev, newTeam])
         }
-        setMembers(prev => [...prev, newMember])
+        handleCloseModal()
+      } catch (error) {
+        console.error('Error saving team:', error);
+        // You might want to show an error message to the user here
       }
-      handleCloseModal()
     }
   }
 
-  // Delete member
-  const handleDelete = (member) => {
-    setMemberToDelete(member)
+  // Delete team
+  const handleDelete = (team) => {
+    setTeamToDelete(team)
     setOpenDeleteConfirm(true)
   }
 
   // Confirm delete
-  const confirmDelete = () => {
-    if (memberToDelete) {
-      setMembers(prev => prev.filter(member => member.email !== memberToDelete.email))
-      setOpenDeleteConfirm(false)
-      setMemberToDelete(null)
+  const confirmDelete = async () => {
+    if (teamToDelete) {
+      try {
+        const token = localStorage.getItem('authToken'); // Assuming token is stored in localStorage
+        await teamApi.deleteTeam(teamToDelete._id, token);
+        setTeams(prev => prev.filter(team => team._id !== teamToDelete._id))
+        setOpenDeleteConfirm(false)
+        setTeamToDelete(null)
+      } catch (error) {
+        console.error('Error deleting team:', error);
+        // You might want to show an error message to the user here
+      }
     }
   }
 
   // Cancel delete
   const cancelDelete = () => {
     setOpenDeleteConfirm(false)
-    setMemberToDelete(null)
+    setTeamToDelete(null)
   }
 
+  // Fetch teams on component mount
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const token = localStorage.getItem('authToken'); // Assuming token is stored in localStorage
+        const teams = await teamApi.getAllTeams(token);
+        setTeams(teams);
+      } catch (error) {
+        console.error('Error fetching teams:', error);
+        // Handle error appropriately - maybe show an error message to user
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTeams();
+  }, []);
+
   // Render action buttons
-  const renderActions = (member) => {
+  const renderActions = (team) => {
     return (
       <Stack direction="row" spacing={1}>
         <CButton 
@@ -137,14 +160,14 @@ export default function TeamPage() {
           active 
           cvariant='t'
           size='small'
-          onClick={() => handleEditMember(member)}
+          onClick={() => handleEditTeam(team)}
         />
         <CButton
           label='Delete'  
           active 
           cvariant='s'
           size='small' 
-          onClick={() => handleDelete(member)}
+          onClick={() => handleDelete(team)}
         />
       </Stack>
     )
@@ -153,62 +176,66 @@ export default function TeamPage() {
   return (
     <Box>
       <Panel 
-        title="Team" 
-        subtitle="Keep your operations team aligned with the right permissions." 
+        title="Teams" 
+        subtitle="Manage your project teams and their descriptions." 
         actions={
           <Stack direction="row" spacing={1}>
             <CButton
               active
-              label="Add Team Member"
+              label="Add Team"
               cvariant="s"
               startIcon={AddIcon}
               size="normal"
-              onClick={handleAddMember}
+              onClick={handleAddTeam}
             />
           </Stack>
         }
       >
-        <TableContainer>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ color: 'var(--s-fg-color)', fontWeight: 700 }}>Name</TableCell>
-                <TableCell sx={{ color: 'var(--s-fg-color)', fontWeight: 700 }}>Email</TableCell>
-                <TableCell sx={{ color: 'var(--s-fg-color)', fontWeight: 700 }}>Role</TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {members.map((member) => (
-                <TableRow key={member.email}>
-                  <TableCell><CTypography cvariant="c" sx={{color: 'var(--p-fg-color)'}}>{member.name}</CTypography></TableCell>
-                  <TableCell><CTypography cvariant="c" sx={{color: 'var(--p-fg-color)'}}>{member.email}</CTypography></TableCell>
-                  <TableCell><CTypography cvariant="c" sx={{color: 'var(--p-fg-color)'}}>{member.role}</CTypography></TableCell>
-                  <TableCell>
-                    {renderActions(member)}
-                  </TableCell>
+        {loading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+            <CTypography cvariant="c">Loading teams...</CTypography>
+          </Box>
+        ) : (
+          <TableContainer>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell sx={{ color: 'var(--s-fg-color)', fontWeight: 700 }}>Name</TableCell>
+                  <TableCell sx={{ color: 'var(--s-fg-color)', fontWeight: 700 }}>Description</TableCell>
+                  <TableCell></TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {teams.map((team) => (
+                  <TableRow key={team._id}>
+                    <TableCell><CTypography cvariant="c" sx={{color: 'var(--p-fg-color)'}}>{team.name}</CTypography></TableCell>
+                    <TableCell><CTypography cvariant="c" sx={{color: 'var(--p-fg-color)'}}>{team.description}</CTypography></TableCell>
+                    <TableCell>
+                      {renderActions(team)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </Panel>
 
-      {/* Add/Edit Member Modal */}
+      {/* Add/Edit Team Modal */}
       <CModal
         open={openModal}
         onClose={handleCloseModal}
-        title={editingMember ? `Edit ${editingMember.name}` : 'Add Team Member'}
+        title={editingTeam ? `Edit ${editingTeam.name}` : 'Add Team'}
         maxWidth="sm"
         sx={{ p: 2, minWidth: '60vw' }}
       >
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
           <CTypography cvariant="th" sx={{fontWeight: '600', color: 'var(--p-fg-color)'}}>
-            {editingMember ? `Edit ${editingMember.name}` : 'Add Team Member'}
+            {editingTeam ? `Edit ${editingTeam.name}` : 'Add Team'}
           </CTypography>
           <CTextField
             fullWidth
-            label="Full Name"
+            label="Team Name"
             name="name"
             value={formData.name}
             onChange={handleInputChange}
@@ -218,37 +245,21 @@ export default function TeamPage() {
           
           <CTextField
             fullWidth
-            label="Email Address"
-            name="email"
-            type="email"
-            value={formData.email}
+            label="Description"
+            name="description"
+            multiline
+            rows={3}
+            value={formData.description}
             onChange={handleInputChange}
-            error={!!errors.email}
-            helperText={errors.email || 'Required'}
+            error={!!errors.description}
+            helperText={errors.description || ''}
             labelStyle={{ mt: 2 }}
             helperTextStyle={{ mb: 2 }}
           />
           
-          <Box sx={{ mb: 2 }}>
-            <CSelect
-              cvariant='s'
-              name='role'
-              label='Role'
-              value={formData.role}
-              onChange={handleInputChange}
-              error={!!errors.role}
-              helperText={errors.role}
-              fullWidth
-            >
-              <MenuItem value={'Admin'}>Admin</MenuItem>
-              <MenuItem value={'Editor'}>Editor</MenuItem>
-              <MenuItem value={'Viewer'}>Viewer</MenuItem>
-            </CSelect>
-          </Box>
-          
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2 }}>
             <CButton label="Cancel" cvariant="ghost" onClick={handleCloseModal} />
-            <CButton label={editingMember ? "Update Member" : "Add Member"} cvariant="primary" type="submit" />
+            <CButton label={editingTeam ? "Update Team" : "Add Team"} cvariant="primary" type="submit" />
           </Box>
         </Box>
       </CModal>
@@ -267,11 +278,11 @@ export default function TeamPage() {
         }}
       >
         <DialogTitle id="delete-dialog-title">
-          {memberToDelete ? `Delete ${memberToDelete.name}` : 'Delete Team Member'}
+          {teamToDelete ? `Delete ${teamToDelete.name}` : 'Delete Team'}
         </DialogTitle>
         <DialogContent>
           <CTypography cvariant="c">
-            Are you sure you want to remove this team member? They will lose access to the system.
+            Are you sure you want to delete this team? All members will lose access.
           </CTypography>
         </DialogContent>
         <DialogActions>
