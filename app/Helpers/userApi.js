@@ -1,8 +1,10 @@
-import { API_BASE_URL } from '../Config/constants';
+import ServerConfig from '../Config/ServerConfig';
+
+const { ServerEndpoint } = ServerConfig
 
 // Helper function to handle API requests
 const apiRequest = async (endpoint, options = {}) => {
-  const url = `${API_BASE_URL}${endpoint}`;
+  const url = `${ServerEndpoint}${endpoint}`;
   
   try {
     const response = await fetch(url, {
@@ -65,7 +67,7 @@ export const userApi = {
 
   // Get Profile
   getProfile: async (token) => {
-    const response = await fetch(`${API_BASE_URL}/user/get-profile`, {
+    const response = await fetch(`${ServerEndpoint}/user/get-profile`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
