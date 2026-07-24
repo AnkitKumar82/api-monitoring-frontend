@@ -22,23 +22,6 @@ const metricCards = [
   { title: 'Uptime', value: '99.973%', trend: 'last 30 days', icon: TrendingUpRounded, color: 'success' }
 ]
 
-const endpoints = [
-  { name: 'Payments API', status: 'healthy', region: 'US-East', latency: '121ms' },
-  { name: 'User Service', status: 'degraded', region: 'EU-West', latency: '245ms' },
-  { name: 'Inventory API', status: 'down', region: 'AP-South', latency: '-' }
-]
-
-const incidents = [
-  { time: '12:04 PM', endpoint: 'Payments API', detail: '503 Service Unavailable', duration: 'Recovered after 3m 22s' },
-  { time: '10:15 AM', endpoint: 'Inventory API', detail: '500 Internal Server Error', duration: 'Recovered after 1m 45s' }
-]
-
-const checks = [
-  { timestamp: '12:04:30', endpoint: 'Payments API', status: 'healthy', latency: '121ms', region: 'US-East' },
-  { timestamp: '12:04:25', endpoint: 'User Service', status: 'degraded', latency: '245ms', region: 'EU-West' },
-  { timestamp: '12:04:20', endpoint: 'Inventory API', status: 'down', latency: '-', region: 'AP-South' }
-]
-
 const StatusBadge = ({ status }) => {
   const map = {
     healthy: { label: 'Healthy', color: 'var(--success-color)' },

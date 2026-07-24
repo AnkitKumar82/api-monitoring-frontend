@@ -11,11 +11,8 @@ import Panel from './Panel'
 import { EmailRounded as EmailIcon, AddRounded as AddIcon, EditRounded as EditIcon, DeleteRounded as DeleteIcon, VisibilityRounded as VisibilityIcon, NotificationsRounded as NotificationsIcon } from '@mui/icons-material'
 import { fetchNotificationChannels, createNotificationChannel, updateNotificationChannel, deleteNotificationChannel } from '../../../Helpers/notificationChannelApi'
 
-// Initial state for channels
-const initialChannels = []
-
 export default function NotificationsPage() {
-  const [channels, setChannels] = useState(initialChannels)
+  const [channels, setChannels] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [openModal, setOpenModal] = useState(false)
