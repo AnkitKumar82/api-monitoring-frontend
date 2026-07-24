@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Box, Grid, Paper, Stack, MenuItem, TablePagination, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 import { AddRounded, SearchRounded } from '@mui/icons-material'
 import CButton from '../../../Components/CButton'
@@ -9,13 +9,7 @@ import CSelect from '../../../Components/CSelect'
 import Panel from './Panel'
 import REGIONS from '../Constants/REGIONS'
 import Link from 'next/link'
-
-const endpoints = [
-  { name: 'Payments API', uptime:'93.132%', method: 'GET', url: 'https://api.example.com/payments', interval: '1 min', regions: ["US","EU"], status: 'HEALTHY', latency: '121ms', lastCheck: '2 min ago' },
-  { name: 'Auth Service', uptime:'78.112%', method: 'POST', url: 'https://api.example.com/auth', interval: '30 sec', regions: ["US","SG"], status: 'DOWN', latency: '245ms', lastCheck: '5 min ago' },
-  { name: 'Auth Service', uptime:'78.112%', method: 'POST', url: 'https://api.example.com/auth', interval: '30 sec', regions: ["US","SG"], status: 'DEGRADED', latency: '245ms', lastCheck: '5 min ago' },
-  { name: 'Inventory API', uptime:'36.82%', method: 'GET', url: 'https://api.example.com/inventory', interval: '5 min', regions: ["SG"], status: 'PAUSED', latency: '-', lastCheck: '10 min ago' }
-]
+import { endpointApi } from '../../../Helpers/endpointApi'
 
 const StatusBadge = ({ status }) => {
   const map = {
@@ -63,6 +57,11 @@ const StatusBadge = ({ status }) => {
 
 export default function EndpointsPage() {
   const [formData, setFormData] = useState({ endpoint: '', methods: [], regions: [], status: [] })
+  const [endpoints, setEndpoints] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [createEndpointDialogOpen, setCreateEndpointDialogOpen] = useState(false)
+  const [selectedEndpoint, setSelectedEndpoint] = useState(null)
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -74,6 +73,109 @@ export default function EndpointsPage() {
 
   const handleResetFilter = (e) => {
     setFormData({ endpoint: '', methods: [], regions: [], status: [] })
+  }
+
+  const handleCreateEndpoint = async (endpointData) => {
+    try {
+      const token = localStorage.getItem('token')
+      if (!token) {
+        throw new Error('Authentication token not found')
+      }
+      
+      const response = await endpointApi.createEndpoint(token, endpointData)
+      // Refresh endpoints list after creation
+      fetchEndpoints()
+      return response
+    } catch (err) {
+      setError(err.message || 'Failed to create endpoint')
+      console.error('Error creating endpoint:', err)
+      throw err
+    }
+  }
+
+  const handleUpdateEndpoint = async (endpointId, endpointData) => {
+    try {
+      const token = localStorage.getItem('token')
+      if (!token) {
+        throw new Error('Authentication token not found')
+      }
+      
+      const response = await endpointApi.updateEndpoint(token, endpointId, endpointData)
+      // Refresh endpoints list after update
+      fetchEndpoints()
+      return response
+    } catch (err) {
+      setError(err.message || 'Failed to update endpoint')
+      console.error('Error updating endpoint:', err)
+      throw err
+    }
+  }
+
+  const handleDeleteEndpoint = async (endpointId) => {
+    try {
+      const token = localStorage.getItem('token')
+      if (!token) {
+        throw new Error('Authentication token not found')
+      }
+      
+      const response = await endpointApi.deleteEndpoint(token, endpointId)
+      // Refresh endpoints list after deletion
+      fetchEndpoints()
+      return response
+    } catch (err) {
+      setError(err.message || 'Failed to delete endpoint')
+      console.error('Error deleting endpoint:', err)
+      throw err
+    }
+  }
+
+  const fetchEndpoints = async () => {
+    try {
+      setLoading(true)
+      // Get token from localStorage (as used in SignIn page)
+      const token = localStorage.getItem('token')
+      if (!token) {
+        throw new Error('Authentication token not found')
+      }
+      
+      const response = await endpointApi.getAllEndpoints(token)
+      setEndpoints(response.data || [])
+    } catch (err) {
+      setError(err.message || 'Failed to fetch endpoints')
+      console.error('Error fetching endpoints:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchEndpoints()
+  }, [])
+
+  // Render loading state
+  if (loading) {
+    return (
+      <Box>
+        <Panel title='Endpoints' subtitle='Manage your monitored services and add new checks.'>
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+            <CTypography cvariant='c'>Loading endpoints...</CTypography>
+          </Box>
+        </Panel>
+      </Box>
+    )
+  }
+
+  // Render error state
+  if (error) {
+    return (
+      <Box>
+        <Panel title='Endpoints' subtitle='Manage your monitored services and add new checks.'>
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+            <CTypography cvariant='c' color='error'>Error: {error}</CTypography>
+          </Box>
+        </Panel>
+      </Box>
+    )
   }
 
   return (
@@ -140,6 +242,15 @@ export default function EndpointsPage() {
             <Box>
               <CButton size='large' label='Search' active startIcon={SearchRounded} cvariant='secondary' />
               <CButton size='large' label='Reset Filter'sx={{ml: '8px'}} onClick={handleResetFilter} cvariant='t' />
+              <CButton 
+                size='large' 
+                label='Create Endpoint' 
+                active 
+                startIcon={AddRounded} 
+                cvariant='primary' 
+                sx={{ ml: '8px' }}
+                onClick={() => setCreateEndpointDialogOpen(true)}
+              />
             </Box>
           </Grid>
         </Grid>
@@ -169,7 +280,14 @@ export default function EndpointsPage() {
             </TableHead>
             <TableBody>
               {endpoints.map((endpoint) => (
-                <TableRow key={endpoint.name} sx={{':hover': { cursor: 'pointer', bgcolor: 'var(--t-bg-color)' }}}>
+                <TableRow 
+                  key={endpoint._id || endpoint.name} 
+                  sx={{':hover': { cursor: 'pointer', bgcolor: 'var(--t-bg-color)' }}}
+                  onClick={() => {
+                    setSelectedEndpoint(endpoint)
+                    // In a real implementation, this would open a modal or navigate to the endpoint detail page
+                  }}
+                >
                   <TableCell>
                     <Link
                       href="/dashboard/endpoint"
@@ -189,7 +307,7 @@ export default function EndpointsPage() {
                         color: 'inherit',
                       }}
                     >
-                      <CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.uptime}</CTypography>
+                      <CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.uptime || 'N/A'}</CTypography>
                     </Link>
                   </TableCell>
                   <TableCell>
@@ -233,7 +351,7 @@ export default function EndpointsPage() {
                         color: 'inherit',
                       }}
                     >
-                    <CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.interval}</CTypography>
+                    <CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.interval || 'N/A'}</CTypography>
                     </Link>
                   </TableCell>
                   <TableCell>
@@ -244,7 +362,7 @@ export default function EndpointsPage() {
                         color: 'inherit',
                       }}
                     >
-                    <CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.regions.map((region) => `${REGIONS[region].flag} `)} </CTypography>
+                    <CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.regions?.map((region) => `${REGIONS[region].flag} `)} </CTypography>
                     </Link>
                   </TableCell>
                   <TableCell>
@@ -255,7 +373,7 @@ export default function EndpointsPage() {
                         color: 'inherit',
                       }}
                     >
-                    <CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.latency}</CTypography>
+                    <CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.latency || '-'}</CTypography>
                     </Link>
                   </TableCell>
                   <TableCell>
@@ -266,7 +384,7 @@ export default function EndpointsPage() {
                         color: 'inherit',
                       }}
                     >
-                    <CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.lastCheck}</CTypography>
+                    <CTypography sx={{ color: 'var(--p-fg-color)' }} cvariant='c'>{endpoint.lastCheck || 'N/A'}</CTypography>
                     </Link>
                   </TableCell>
                 </TableRow>
