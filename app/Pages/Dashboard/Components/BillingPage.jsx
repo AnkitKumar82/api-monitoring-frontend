@@ -1,59 +1,48 @@
-import React, { useState } from 'react'
-import { Box, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Divider, Switch, FormControlLabel } from '@mui/material'
+import React, { useState, useEffect } from 'react'
+import { Box, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Divider, FormControlLabel } from '@mui/material'
 import CTypography from '../../../Components/CTypography'
 import CButton from '../../../Components/CButton'
 import Panel from './Panel'
-import CToggle from '../../../Components/CToggle'
 import CSwitch from '../../../Components/CSwitch'
-
-// Mock data for payment history
-const mockPayments = [
-  {
-    id: 1,
-    date: '2024-06-01',
-    planName: 'Pro Plan',
-    amount: '$79.00',
-    status: 'Completed',
-    invoiceId: 'INV-001'
-  },
-  {
-    id: 2,
-    date: '2024-05-01',
-    planName: 'Pro Plan',
-    amount: '$79.00',
-    status: 'Completed',
-    invoiceId: 'INV-002'
-  },
-  {
-    id: 3,
-    date: '2024-04-01',
-    planName: 'Pro Plan',
-    amount: '$79.00',
-    status: 'Completed',
-    invoiceId: 'INV-003'
-  },
-  {
-    id: 4,
-    date: '2024-03-01',
-    planName: 'Pro Plan',
-    amount: '$79.00',
-    status: 'Completed',
-    invoiceId: 'INV-004'
-  }
-]
+import { workspaceApi } from '../../../Helpers/workspaceApi'
 
 export default function BillingPage() {
-  const [payments] = useState(mockPayments)
+  const [payments, setPayments] = useState([])
   const [autoPay, setAutoPay] = useState(true)
-  
-  // Mock current plan data
-  const currentPlan = {
-    name: 'Pro Plan',
-    price: '$79/month',
-    endpoints: 250,
-    nextBilling: 'August 1, 2026',
-    autoPay: true
-  }
+  const [currentPlan, setCurrentPlan] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  // Mock token - in real app this would come from authentication
+  const token = localStorage.getItem('authToken') || 'mock-token'
+
+  useEffect(() => {
+    const fetchBillingData = async () => {
+      try {
+        setLoading(true)
+        
+        // Get current workspace plan details
+        const workspaceResponse = await workspaceApi.getCurrentWorkspace(token)
+        const workspaceData = workspaceResponse.data
+        
+        setPayments(workspaceData.payments || [])
+        setCurrentPlan({
+          name: workspaceData.plan || 'Pro Plan',
+          price: workspaceData.plan === 'BASIC' ? '$29/month' : '$79/month',
+          endpoints: workspaceData.plan === 'BASIC' ? 50 : 250,
+          nextBilling: 'August 1, 2026',
+          autoPay: true
+        })
+      } catch (err) {
+        setError(err.message)
+        console.error('Error fetching billing data:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchBillingData()
+  }, [])
 
   return (
     <Box>
@@ -70,8 +59,8 @@ export default function BillingPage() {
                 backdropFilter: 'blur(20px)'
               }}
             >
-              <CTypography cvariant='sh' sx={{ mb: 0.75 }}>{currentPlan.name}</CTypography>
-              <CTypography cvariant='caption'>{currentPlan.price} • {currentPlan.endpoints} monitored endpoints</CTypography>
+              <CTypography cvariant='sh' sx={{ mb: 0.75 }}>{currentPlan?.name}</CTypography>
+              <CTypography cvariant='caption'>{currentPlan?.price} • {currentPlan?.endpoints} monitored endpoints</CTypography>
             </Box>
           </Grid>
           <Grid item xs={12} md={6}>
@@ -85,7 +74,7 @@ export default function BillingPage() {
               }}
             >
               <CTypography cvariant='sh' sx={{ mb: 0.75 }}>Next invoice</CTypography>
-              <CTypography cvariant='caption'>{currentPlan.nextBilling} • Auto-pay {autoPay ? 'enabled' : 'disabled'}</CTypography>
+              <CTypography cvariant='caption'>{currentPlan?.nextBilling} • Auto-pay {autoPay ? 'enabled' : 'disabled'}</CTypography>
             </Box>
           </Grid>
         </Grid>
