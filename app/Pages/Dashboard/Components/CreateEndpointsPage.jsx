@@ -6,6 +6,7 @@ import CSelect from '../../../Components/CSelect'
 import CTextField from '../../../Components/CTextField'
 import Panel from './Panel'
 import Link from 'next/link'
+import { endpointApi } from '../../../Helpers/endpointApi'
 
 // Mock data for notification groups (similar to notifications page)
 const mockNotificationGroups = [
@@ -84,6 +85,7 @@ export default function CreateEndpointsPage() {
     interval: ''
   })
   const [errors, setErrors] = useState({})
+  const [loading, setLoading] = useState(false)
 
   // Handle form input changes
   const handleInputChange = (e) => {
@@ -160,21 +162,52 @@ export default function CreateEndpointsPage() {
   }
 
   // Submit form
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (validateForm()) {
-      // In a real application, this would make an API call to create the endpoint
-      console.log('Endpoint created with data:', formData)
-      alert('Endpoint created successfully!')
-      // Reset form after successful submission
-      setFormData({
-        name: '',
-        urls: '',
-        method: '',
-        responseType: '',
-        notificationGroups: [],
-        interval: ''
-      })
+      setLoading(true)
+      try {
+        // Get token from localStorage (same as SignIn page)
+        const token = localStorage.getItem('token')
+        if (!token) {
+          throw new Error('Authentication token not found')
+        }
+
+        // Prepare endpoint data for API call
+        const endpointData = {
+          name: formData.name,
+          url: formData.urls.split('\n').filter(url => url.trim() !== '')[0], // Use first valid URL
+          method: formData.method,
+          intervalSeconds: parseInt(formData.interval), // Convert to seconds
+          headers: formData.headers ? formData.headers.split('\n').map(header => {
+            const [key, value] = header.split(':').map(part => part.trim())
+            return { key, value }
+          }).filter(h => h.key && h.value) : [],
+          expectedStatusCodes: formData.responseType === 'status_code' ? formData.statusCode.split(',').map(code => parseInt(code.trim())) : [200],
+          expectedResponseContains: formData.responseType === 'string_match' ? formData.stringMatch : undefined,
+          body: formData.responseType === 'json_match' ? formData.jsonMatch : undefined,
+          notificationGroupIds: formData.notificationGroups,
+        }
+
+        // Make API call to create endpoint
+        const result = await endpointApi.createEndpoint(token, endpointData)
+        console.log('Endpoint created:', result)
+        alert('Endpoint created successfully!')
+        // Reset form after successful submission
+        setFormData({
+          name: '',
+          urls: '',
+          method: '',
+          responseType: '',
+          notificationGroups: [],
+          interval: ''
+        })
+      } catch (error) {
+        console.error('Error creating endpoint:', error)
+        alert(`Error creating endpoint: ${error.message || 'Unknown error'}`)
+      } finally {
+        setLoading(false)
+      }
     }
   }
 
@@ -375,9 +408,10 @@ export default function CreateEndpointsPage() {
             <Grid item xs={12}>
               <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <CButton 
-                  label="Create Endpoint" 
+                  label={loading ? "Creating..." : "Create Endpoint"} 
                   cvariant="primary" 
                   type="submit" 
+                  disabled={loading}
                 />
               </Box>
             </Grid>

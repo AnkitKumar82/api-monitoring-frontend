@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Box, Grid, Paper, Stack, TablePagination, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, MenuItem, Button } from '@mui/material'
 import {
   LineChart,
@@ -20,61 +20,62 @@ import CTextField from '../../../Components/CTextField'
 import Panel from './Panel'
 import REGIONS from '../Constants/REGIONS'
 import Link from 'next/link'
+import { endpointApi } from '../../../Helpers/endpointApi'
 
 // Mock data for endpoint details
-const endpointDetails = {
-  name: 'Payments API',
-  url: 'https://api.example.com/payments',
-  method: 'POST',
-  interval: '1 min',
-  uptime: '93.132%',
-  status: 'HEALTHY',
-  latency: '121ms',
-  lastCheck: '2 min ago'
-}
+const [endpointDetails, setEndpointDetails] = useState({
+  name: '',
+  url: '',
+  method: '',
+  interval: '',
+  uptime: '',
+  status: '',
+  latency: '',
+  lastCheck: ''
+})
 
-// Mock data for charts
-const latencyData = [
+// Mock data for charts - will be replaced with real data from API
+const [latencyData, setLatencyData] = useState([
   { time: '00:00', latency: 120 },
   { time: '04:00', latency: 150 },
   { time: '08:00', latency: 110 },
   { time: '12:00', latency: 130 },
   { time: '16:00', latency: 140 },
   { time: '20:00', latency: 125 },
-]
+])
 
-const uptimeData = [
+const [uptimeData, setUptimeData] = useState([
   { time: '00:00', uptime: 98.5 },
   { time: '04:00', uptime: 97.2 },
   { time: '08:00', uptime: 99.1 },
   { time: '12:00', uptime: 98.8 },
   { time: '16:00', uptime: 97.5 },
   { time: '20:00', uptime: 98.2 },
-]
+])
 
-// Mock data for previous checks
-const checks = [
+// Mock data for previous checks - will be replaced with real data from API
+const [checks, setChecks] = useState([
   { timestamp: '12:04:30', endpoint: 'Payments API', status: 'healthy', latency: '121ms', region: 'US-East' },
   { timestamp: '12:04:25', endpoint: 'User Service', status: 'degraded', latency: '245ms', region: 'EU-West' },
-  { timestamp: '12:04:20', endpoint: 'Inventory API', status: 'down', latency: '-', region: 'AP-South' },
+  { timestamp: '12:00:20', endpoint: 'Inventory API', status: 'down', latency: '-', region: 'AP-South' },
   { timestamp: '12:04:15', endpoint: 'Payments API', status: 'healthy', latency: '118ms', region: 'US-East' },
   { timestamp: '12:04:10', endpoint: 'Payments API', status: 'healthy', latency: '130ms', region: 'US-East' }
-]
+])
 
-// Mock data for incidents
-const incidents = [
+// Mock data for incidents - will be replaced with real data from API
+const [incidents, setIncidents] = useState([
   { time: '12:04 PM', endpoint: 'Payments API', detail: '503 Service Unavailable', duration: 'Recovered after 3m 22s' },
   { time: '10:15 AM', endpoint: 'Inventory API', detail: '500 Internal Server Error', duration: 'Recovered after 1m 45s' },
   { time: '09:30 AM', endpoint: 'Payments API', detail: 'Timeout error', duration: 'Recovered after 2m 15s' }
-]
+])
 
-// Mock notification groups
-const notificationGroups = [
+// Mock notification groups - will be replaced with real data from API
+const [notificationGroups, setNotificationGroups] = useState([
   { id: 1, name: 'Admin Team' },
   { id: 2, name: 'DevOps Team' },
   { id: 3, name: 'Payment Service Team' },
   { id: 4, name: 'Security Team' }
-]
+])
 
 // Status badge component
 const StatusBadge = ({ status }) => {
@@ -123,6 +124,8 @@ const StatusBadge = ({ status }) => {
 
 export default function EndpointAnalysis() {
   const [selectedGroups, setSelectedGroups] = useState([1, 3]) // Pre-selected groups
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   // State for search filters
   const [checksFilter, setChecksFilter] = useState({
@@ -142,6 +145,96 @@ const [uptimeTimeframe, setUptimeTimeframe] = useState('Last 24 Hours');
 // State for region selectors
 const [latencyRegion, setLatencyRegion] = useState('');
 const [uptimeRegion, setUptimeRegion] = useState('');
+
+  // Fetch endpoint data when component mounts (this would be replaced with actual endpoint ID from URL params)
+  useEffect(() => {
+    const fetchEndpointData = async () => {
+      try {
+        setLoading(true)
+        // Get token from localStorage (same as SignIn page)
+        const token = localStorage.getItem('token')
+        if (!token) {
+          throw new Error('Authentication token not found')
+        }
+
+        // In a real app, we would get the endpoint ID from URL parameters
+        // For now, using a mock endpoint ID for demonstration purposes
+        const endpointId = '640012345678901234567892' // This would be dynamically determined in real app
+
+        // Fetch endpoint details by ID (GET /endpoints/:id)
+        const endpointData = await endpointApi.getEndpointById(token, endpointId)
+        setEndpointDetails({
+          name: endpointData.name,
+          url: endpointData.url,
+          method: endpointData.method,
+          interval: `${endpointData.intervalSeconds} seconds`,
+          uptime: '93.132%', // This would come from API in real app
+          status: endpointData.status || 'HEALTHY', // Would be dynamic from API
+          latency: '121ms', // Would be dynamic from API
+          lastCheck: '2 min ago' // Would be dynamic from API
+        })
+
+        // Mock chart data - would be replaced with real data from API in a real app
+        setLatencyData([
+          { time: '00:00', latency: 120 },
+          { time: '04:00', latency: 150 },
+          { time: '08:00', latency: 110 },
+          { time: '12:00', latency: 130 },
+          { time: '16:00', latency: 140 },
+          { time: '20:00', latency: 125 },
+        ])
+
+        setUptimeData([
+          { time: '00:00', uptime: 98.5 },
+          { time: '04:00', uptime: 97.2 },
+          { time: '08:00', uptime: 99.1 },
+          { time: '12:00', uptime: 98.8 },
+          { time: '16:00', uptime: 97.5 },
+          { time: '20:00', uptime: 98.2 },
+        ])
+
+        // Mock checks data - would be replaced with real data from API in a real app
+        setChecks([
+          { timestamp: '12:04:30', endpoint: endpointData.name, status: 'healthy', latency: '121ms', region: 'US-East' },
+          { timestamp: '12:04:25', endpoint: 'User Service', status: 'degraded', latency: '245ms', region: 'EU-West' },
+          { timestamp: '12:00:20', endpoint: 'Inventory API', status: 'down', latency: '-', region: 'AP-South' },
+          { timestamp: '12:04:15', endpoint: endpointData.name, status: 'healthy', latency: '118ms', region: 'US-East' },
+          { timestamp: '12:04:10', endpoint: endpointData.name, status: 'healthy', latency: '130ms', region: 'US-East' }
+        ])
+
+        // Mock incidents data - would be replaced with real data from API in a real app
+        setIncidents([
+          { time: '12:04 PM', endpoint: endpointData.name, detail: '503 Service Unavailable', duration: 'Recovered after 3m 22s' },
+          { time: '10:15 AM', endpoint: 'Inventory API', detail: '500 Internal Server Error', duration: 'Recovered after 1m 45s' },
+          { time: '09:30 AM', endpoint: endpointData.name, detail: 'Timeout error', duration: 'Recovered after 2m 15s' }
+        ])
+
+        // Mock notification groups - would be replaced with real data from API in a real app
+        setNotificationGroups([
+          { id: 1, name: 'Admin Team' },
+          { id: 2, name: 'DevOps Team' },
+          { id: 3, name: 'Payment Service Team' },
+          { id: 4, name: 'Security Team' }
+        ])
+
+      } catch (err) {
+        console.error('Error fetching endpoint data:', err)
+        setError(err.message || 'Failed to fetch endpoint data')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchEndpointData()
+  }, []) // Empty dependency array means this runs once on mount
+
+  if (loading) {
+    return <Box sx={{ textAlign: 'center', p: 4 }}>Loading endpoint details...</Box>
+  }
+
+  if (error) {
+    return <Box sx={{ textAlign: 'center', p: 4, color: 'error.main' }}>Error: {error}</Box>
+  }
 
   return (
     <Box>

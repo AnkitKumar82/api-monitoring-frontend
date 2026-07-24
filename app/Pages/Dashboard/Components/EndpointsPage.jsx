@@ -71,7 +71,7 @@ export default function EndpointsPage() {
     }))
   }
 
-  const handleResetFilter = (e) => {
+  const handleResetFilter = () => {
     setFormData({ endpoint: '', methods: [], regions: [], status: [] })
   }
 
